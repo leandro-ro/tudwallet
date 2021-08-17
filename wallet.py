@@ -11,9 +11,12 @@ SIG_FILE_NAME = "signature.sig"
 
 
 class Wallet:
-    def __init__(self, base_directory):
-        self.cold_wallet = _ColdWallet()
-        self.hot_wallet = _HotWallet()
+    def __init__(self, base_directory="data/"):
+        if not os.path.exists(base_directory):
+            os.mkdir(base_directory)
+
+        self.cold_wallet = _ColdWallet(base_directory + "ColdWalletData/")
+        self.hot_wallet = _HotWallet(base_directory + "HotWalletData/")
         self.cold_wallet_synced = False
 
     def generate_master_key(self, overwrite=False):
@@ -29,7 +32,10 @@ class Wallet:
 
 
 class _ColdWallet:
-    def __init__(self, directory="ColdWalletData/"):
+    def __init__(self, directory):
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+
         self.__master_secret_file_path = directory + MSK_FILE_NAME
         self.__master_public_file_path = directory + MPK_FILE_NAME
         self.__state_file_path = directory + STATE_FILE_NAME
@@ -52,7 +58,7 @@ class _ColdWallet:
         state = key.getState()  # 32 Bytes
 
         id_state_map = {0: list(state)}  # dict is the state data structure
-        update_dict_file(self.__signature_file_path, id_state_map)  # write dict to file
+        update_dict_file(self.__state_file_path, id_state_map)  # write dict to file
 
         sk = key.getKeySec()
         pk = key.getKeyPub()
@@ -81,7 +87,10 @@ class _ColdWallet:
 
 
 class _HotWallet:
-    def __init__(self, directory="HotWalletData/"):
+    def __init__(self, directory):
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+
         self.__master_public_file_path = directory + MPK_FILE_NAME
         self.__state_file_path = directory + STATE_FILE_NAME
 
