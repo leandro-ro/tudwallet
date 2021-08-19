@@ -26,8 +26,31 @@ class Wallet:
         self.cold_wallet.copy_mpk_to(self.hot_wallet.get_mpk_path())  # Init hot_wallet with MPK
         self.cold_wallet_synced = True  # The initial state is the same for both wallets
 
-    def sync_wallets(self):
-        self.hot_wallet.copy_state_to(self.cold_wallet.get_state_path)  # Copy state of hot wallet to cold wallet
+    def secret_key_derive(self, id=None):
+        self._sync_wallets()
+
+        if id is None:
+            return self.cold_wallet.secret_key_derive(self.cold_wallet.get_max_id())
+        if id not in self.cold_wallet.get_ids():
+            raise Exception("Derive session public key with ID = " + id + " first!")
+
+        return self.cold_wallet.secret_key_derive(id)
+
+    def public_key_derive(self, id=None):
+        max_id = self.hot_wallet.get_max_id()
+        if id is not None:
+            if max_id <= id:
+                raise Exception("tudwallet - ID is lower then previous IDs. Choose ID higher than: " + str(max_id))
+            next_id = id
+        else:
+            next_id = max_id + 1
+
+        self.cold_wallet_synced = False
+        return self.hot_wallet.public_key_derive(next_id)
+
+    def _sync_wallets(self):
+        if self.cold_wallet_synced: return
+        self.hot_wallet.copy_state_to(self.cold_wallet.get_state_path())  # Copy state of hot wallet to cold wallet
         self.cold_wallet_synced = True
 
 
@@ -44,8 +67,6 @@ class _ColdWallet:
         self.__base_directory = directory
 
     def master_key_gen(self, overwrite=False):
-        cww = ColdWalletWrapper()
-
         if not overwrite and os.path.exists(self.__master_secret_file_path):
             raise Exception("Master Secret Key already created. You must use this function with overwrite=True to "
                             "create a new one")
@@ -54,11 +75,12 @@ class _ColdWallet:
                 for file in files:
                     os.remove(os.path.join(root, file))
 
+        cww = ColdWalletWrapper()
         key = cww.master_gen()
         state = key.getState()  # 32 Bytes
 
         id_state_map = {0: list(state)}  # dict is the state data structure
-        update_dict_file(self.__state_file_path, id_state_map)  # write dict to file
+        save_dict_to_file(self.__state_file_path, id_state_map)  # write dict to file
 
         sk = key.getKeySec()
         pk = key.getKeyPub()
@@ -73,8 +95,39 @@ class _ColdWallet:
             key_file.write(str(pk.getPointY().toString()))
             key_file.close()
 
-    def secret_key_derive(self):
-        pass # TODO
+    def secret_key_derive(self, id):
+        if not os.path.exists(self.__master_secret_file_path):
+            raise Exception("Wallet not initialized yet. Call master_key_gen first!")
+
+        id_state_map = get_dict_from_file(self.__state_file_path)
+        if str(id) not in id_state_map:
+            raise Exception("HotWallet: Derive public session key for ID: " + str(id) + " first!")
+
+        key_hash_map = {}
+        if os.path.exists(self.__session_secret_file_path):
+            key_hash_map = get_dict_from_file(self.__session_secret_file_path)  # Init empty dict. Types: <String,
+            # BigInteger>. Written to file as <String, String>
+            if str(id) in key_hash_map:  # if key already derived return it directly from the key file
+                return key_hash_map[str(id)]
+        last_state = id_state_map[str(id - 1)]  # TODO: Check if this is correct
+
+        master_sec_key = get_private_key_from_file(self.__master_secret_file_path)  # Type: java.math.BigInteger
+
+        session_secret_key = ColdWalletWrapper().sk_derive(master_sec_key, str(id), last_state).getSecretKey()
+        key_hash_map[str(id)] = str(session_secret_key)
+        save_dict_to_file(self.__session_secret_file_path, key_hash_map)
+
+        return key_hash_map[str(id)]
+
+    def get_ids(self):
+        id_state_map = get_dict_from_file(self.__state_file_path)
+        return map(int, id_state_map.keys())
+
+    def get_max_id(self):
+        if not os.path.exists(self.__state_file_path):
+            raise Exception("No state file exists. Call master_key_gen first!")
+
+        return max(list(self.get_ids()))
 
     def get_state_path(self):
         return self.__state_file_path
@@ -83,7 +136,7 @@ class _ColdWallet:
         copyfile(self.__state_file_path, path)
 
     def copy_mpk_to(self, path):
-        copyfile(self.__state_file_path, path)
+        copyfile(self.__master_public_file_path, path)
 
 
 class _HotWallet:
@@ -94,6 +147,22 @@ class _HotWallet:
         self.__master_public_file_path = directory + MPK_FILE_NAME
         self.__state_file_path = directory + STATE_FILE_NAME
 
+    def public_key_derive(self, id):
+        if not os.path.exists(self.__master_public_file_path):
+            raise Exception("Wallet not initialized yet. Call master_key_gen first!")
+
+        id_state_map = get_dict_from_file(self.__state_file_path)
+        last_state = id_state_map[str(self.get_max_id())]
+
+        master_public_key = get_public_key_from_file(self.__master_public_file_path)
+        pk = HotWalletWrapper().pk_derive(master_public_key, str(id), last_state)
+        session_public_key = pk.getPublicKey()
+        next_state = pk.getState()
+
+        id_state_map[str(id)] = list(next_state)
+        save_dict_to_file(self.__state_file_path, id_state_map)
+        return str(session_public_key)
+
     def get_state_path(self):
         return self.__state_file_path
 
@@ -102,3 +171,10 @@ class _HotWallet:
 
     def copy_state_to(self, path):
         copyfile(self.__state_file_path, path)
+
+    def get_max_id(self):
+        if not os.path.exists(self.__state_file_path):
+            raise Exception("No state file exists. Call master_key_gen first!")
+
+        id_state_map = get_dict_from_file(self.__state_file_path)
+        return max(list(map(int, id_state_map.keys())))

@@ -2,7 +2,7 @@ import jpype, json
 from wrapper import create_elliptic_curve_point
 
 
-def update_dict_file(path, state_dict: dict):
+def save_dict_to_file(path, state_dict: dict):
     with open(path, 'w') as txt_file:
         json.dump(state_dict, txt_file)
         txt_file.close()
