@@ -32,7 +32,7 @@ class Wallet:
         if id is None:
             return self.cold_wallet.secret_key_derive(self.cold_wallet.get_max_id())
         if id not in self.cold_wallet.get_ids():
-            raise Exception("Derive session public key with ID = " + id + " first!")
+            raise Exception("tudwallet - Derive session public key with ID = " + id + " first!")
 
         return self.cold_wallet.secret_key_derive(id)
 
@@ -48,8 +48,19 @@ class Wallet:
         self.cold_wallet_synced = False
         return self.hot_wallet.public_key_derive(next_id)
 
+    def sign_transaction(self, tx, id):
+        self._sync_wallets()
+        if id not in self.cold_wallet.get_ids():
+            raise Exception("tudwallet - Derive session public/secret key with ID = " + id + " first!")
+        # TODO: implement
+        return
+
+    def get_all_ids(self):
+        return self.hot_wallet.get_ids()
+
     def _sync_wallets(self):
-        if self.cold_wallet_synced: return
+        if self.cold_wallet_synced:
+            return
         self.hot_wallet.copy_state_to(self.cold_wallet.get_state_path())  # Copy state of hot wallet to cold wallet
         self.cold_wallet_synced = True
 
@@ -100,15 +111,13 @@ class _ColdWallet:
             raise Exception("Wallet not initialized yet. Call master_key_gen first!")
 
         id_state_map = get_dict_from_file(self.__state_file_path)
-        if str(id) not in id_state_map:
-            raise Exception("HotWallet: Derive public session key for ID: " + str(id) + " first!")
 
         key_hash_map = {}
         if os.path.exists(self.__session_secret_file_path):
             key_hash_map = get_dict_from_file(self.__session_secret_file_path)  # Init empty dict. Types: <String,
             # BigInteger>. Written to file as <String, String>
             if str(id) in key_hash_map:  # if key already derived return it directly from the key file
-                return key_hash_map[str(id)]
+                return hex(int(str(key_hash_map[str(id)])))
         last_state = id_state_map[str(id - 1)]  # TODO: Check if this is correct
 
         master_sec_key = get_private_key_from_file(self.__master_secret_file_path)  # Type: java.math.BigInteger
@@ -117,17 +126,25 @@ class _ColdWallet:
         key_hash_map[str(id)] = str(session_secret_key)
         save_dict_to_file(self.__session_secret_file_path, key_hash_map)
 
-        return key_hash_map[str(id)]
+        return hex(int(str(key_hash_map[str(id)])))
+
+    def sign_transaction(self, tx, id):
+        if not os.path.exists(self.__master_secret_file_path):
+            raise Exception("Wallet not initialized yet. Call master_key_gen first!")
+
+        session_secret_key = get_dict_from_file(self.__session_secret_file_path)[str(id)]
+
+    def sign_message(self):
+        pass
 
     def get_ids(self):
         id_state_map = get_dict_from_file(self.__state_file_path)
-        return map(int, id_state_map.keys())
+        return list(map(int, id_state_map.keys()))
 
     def get_max_id(self):
         if not os.path.exists(self.__state_file_path):
             raise Exception("No state file exists. Call master_key_gen first!")
-
-        return max(list(self.get_ids()))
+        return max(self.get_ids())
 
     def get_state_path(self):
         return self.__state_file_path
@@ -161,7 +178,7 @@ class _HotWallet:
 
         id_state_map[str(id)] = list(next_state)
         save_dict_to_file(self.__state_file_path, id_state_map)
-        return str(session_public_key)
+        return {"X": hex(int(str(session_public_key.getPointX()))), "Y": hex(int(str(session_public_key.getPointY())))}
 
     def get_state_path(self):
         return self.__state_file_path
@@ -172,9 +189,11 @@ class _HotWallet:
     def copy_state_to(self, path):
         copyfile(self.__state_file_path, path)
 
+    def get_ids(self):
+        id_state_map = get_dict_from_file(self.__state_file_path)
+        return list(map(int, id_state_map.keys()))
+
     def get_max_id(self):
         if not os.path.exists(self.__state_file_path):
             raise Exception("No state file exists. Call master_key_gen first!")
-
-        id_state_map = get_dict_from_file(self.__state_file_path)
-        return max(list(map(int, id_state_map.keys())))
+        return max(self.get_ids())
