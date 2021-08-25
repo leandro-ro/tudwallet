@@ -14,7 +14,7 @@ from com.trident.crypto.field.element import FiniteFieldElementFactory
 
 class ColdWalletWrapper:
 
-    def __init__(self, spec=SECP.SECP521R1, hash_algorithm="SHA-512"):
+    def __init__(self, spec=SECP.SECP256K1, hash_algorithm="SHA-256"):
         self.cold_wallet = ColdWallet(spec, hash_algorithm)
 
     def master_gen(self):
@@ -32,7 +32,7 @@ class ColdWalletWrapper:
 
 class HotWalletWrapper:
 
-    def __init__(self, spec=SECP.SECP521R1, hash_algorithm="SHA-512"):
+    def __init__(self, spec=SECP.SECP256K1, hash_algorithm="SHA-256"):
         self.hot_wallet = HotWallet(spec, hash_algorithm)
 
     def pk_derive(self, master_pk, id, state):
