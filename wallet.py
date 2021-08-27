@@ -1,4 +1,5 @@
 from wrapper import ColdWalletWrapper, HotWalletWrapper
+from eth_utils import keccak
 import os
 from shutil import copyfile
 from utils import *
@@ -36,7 +37,7 @@ class Wallet:
 
         return self.cold_wallet.secret_key_derive(id)
 
-    def public_key_derive(self, id=None):
+    def public_key_derive(self, id=None, return_pubkey=False):
         max_id = self.hot_wallet.get_max_id()
         if id is not None:
             if max_id <= id:
@@ -46,17 +47,29 @@ class Wallet:
             next_id = max_id + 1
 
         self.cold_wallet_synced = False
-        return self.hot_wallet.public_key_derive(next_id)
+        pk = self.hot_wallet.public_key_derive(next_id)
+
+        if return_pubkey:
+            return pk
+        else:
+            return self.get_address(pk)
 
     def sign_transaction(self, tx, id):
-        self._sync_wallets()
-        if id not in self.cold_wallet.get_ids():
-            raise Exception("tudwallet - Derive session public/secret key with ID = " + id + " first!")
+        self._id_existing(id)
+
         # TODO: implement
         return
 
     def get_all_ids(self):
         return self.hot_wallet.get_ids()
+
+    @staticmethod
+    def get_address(public_key: dict):
+        x = public_key["X"][2:]
+        y = public_key["Y"][2:]
+        preimage = x+y
+        keccak256 = keccak(hexstr=preimage)
+        return "0x" + keccak256.hex()[24:]
 
     def _sync_wallets(self):
         if self.cold_wallet_synced:
@@ -64,6 +77,10 @@ class Wallet:
         self.hot_wallet.copy_state_to(self.cold_wallet.get_state_path())  # Copy state of hot wallet to cold wallet
         self.cold_wallet_synced = True
 
+    def _id_existing(self, id):
+        self._sync_wallets()
+        if id not in self.cold_wallet.get_ids():
+            raise Exception("tudwallet - Derive session public/secret key with ID = " + id + " first!")
 
 class _ColdWallet:
     def __init__(self, directory):
