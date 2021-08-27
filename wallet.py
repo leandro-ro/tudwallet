@@ -31,13 +31,16 @@ class Wallet:
         self._sync_wallets()
 
         if id is None:
-            return self.cold_wallet.secret_key_derive(self.cold_wallet.get_max_id())
+            max_id = self.cold_wallet.get_max_id()
+            sk_raw = self.cold_wallet.secret_key_derive(max_id)
+            return PrivateKey(key=sk_raw, id=max_id)
         if id not in self.cold_wallet.get_ids():
             raise Exception("tudwallet - Derive session public key with ID = " + id + " first!")
 
-        return self.cold_wallet.secret_key_derive(id)
+        sk_raw = self.cold_wallet.secret_key_derive(id)
+        return PrivateKey(key=sk_raw, id=id)
 
-    def public_key_derive(self, id=None, return_pubkey=False):
+    def public_key_derive(self, id=None):
         max_id = self.hot_wallet.get_max_id()
         if id is not None:
             if max_id <= id:
@@ -47,12 +50,9 @@ class Wallet:
             next_id = max_id + 1
 
         self.cold_wallet_synced = False
-        pk = self.hot_wallet.public_key_derive(next_id)
-
-        if return_pubkey:
-            return pk
-        else:
-            return self.get_address(pk)
+        raw_pk = self.hot_wallet.public_key_derive(next_id)
+        pk = PublicKey(self._get_address(raw_pk), next_id, raw_pk["X"], raw_pk["Y"])
+        return pk
 
     def sign_transaction(self, tx, id):
         self._id_existing(id)
@@ -64,10 +64,10 @@ class Wallet:
         return self.hot_wallet.get_ids()
 
     @staticmethod
-    def get_address(public_key: dict):
+    def _get_address(public_key: dict):
         x = public_key["X"][2:]
         y = public_key["Y"][2:]
-        preimage = x+y
+        preimage = x + y
         keccak256 = keccak(hexstr=preimage)
         return "0x" + keccak256.hex()[24:]
 
@@ -81,6 +81,7 @@ class Wallet:
         self._sync_wallets()
         if id not in self.cold_wallet.get_ids():
             raise Exception("tudwallet - Derive session public/secret key with ID = " + id + " first!")
+
 
 class _ColdWallet:
     def __init__(self, directory):

@@ -1,5 +1,20 @@
 import jpype, json
 from wrapper import create_elliptic_curve_point
+from dataclasses import dataclass
+
+
+@dataclass
+class PublicKey:
+    address: str
+    id: int
+    x: str
+    y: str
+
+
+@dataclass
+class PrivateKey:
+    key: str
+    id: int
 
 
 def save_dict_to_file(path, state_dict: dict):
