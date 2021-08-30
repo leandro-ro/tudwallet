@@ -1,3 +1,5 @@
+import os
+
 import jpype, json
 from wrapper import create_elliptic_curve_point
 from dataclasses import dataclass
@@ -52,3 +54,9 @@ def write_signature_to_file(path, signature):
         json.dump(signature, sig_file)
         sig_file.close()
         return True
+
+
+def delete_files_in_folder(path):
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            os.remove(os.path.join(root, file))

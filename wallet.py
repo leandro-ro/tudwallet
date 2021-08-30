@@ -7,6 +7,7 @@ from utils import *
 MPK_FILE_NAME = "MPK.key"  # Master Public Key
 MSK_FILE_NAME = "MSK.key"  # Master Secret Key
 SSK_FILE_NAME = "SecretKeyID.key"  # Session Secret Keys
+SPK_FILE_NAME = "PublicKeyID.key"  # Session Public Keys
 STATE_FILE_NAME = "state.txt"
 SIG_FILE_NAME = "signature.sig"
 
@@ -21,7 +22,10 @@ class Wallet:
         self.cold_wallet_synced = False
 
     def generate_master_key(self, overwrite=False):
-        self.cold_wallet.master_key_gen(overwrite=overwrite)
+        self.cold_wallet.master_key_gen(overwrite=overwrite)  # Potential overwrite exception already raised here
+
+        if overwrite:
+            delete_files_in_folder(self.hot_wallet.get_base_path())
 
         self.cold_wallet.copy_state_to(self.hot_wallet.get_state_path())  # Transfer initial state
         self.cold_wallet.copy_mpk_to(self.hot_wallet.get_mpk_path())  # Init hot_wallet with MPK
@@ -35,7 +39,7 @@ class Wallet:
             sk_raw = self.cold_wallet.secret_key_derive(max_id)
             return PrivateKey(key=sk_raw, id=max_id)
         if id not in self.cold_wallet.get_ids():
-            raise Exception("tudwallet - Derive session public key with ID = " + id + " first!")
+            raise Exception("tudwallet - Derive session public key with ID = " + str(id) + " first!")
 
         sk_raw = self.cold_wallet.secret_key_derive(id)
         return PrivateKey(key=sk_raw, id=id)
@@ -43,8 +47,12 @@ class Wallet:
     def public_key_derive(self, id=None):
         max_id = self.hot_wallet.get_max_id()
         if id is not None:
-            if max_id <= id:
-                raise Exception("tudwallet - ID is lower then previous IDs. Choose ID higher than: " + str(max_id))
+            if id <= max_id:
+                if id not in self.hot_wallet.get_ids():
+                    raise Exception("tudwallet - ID is lower then previous IDs. Choose ID higher than: " + str(max_id))
+                else:
+                    raw_pk = self.hot_wallet.public_key_derive(id)
+                    return PublicKey(self._get_address(raw_pk), id, raw_pk["X"], raw_pk["Y"])
             next_id = id
         else:
             next_id = max_id + 1
@@ -54,8 +62,10 @@ class Wallet:
         pk = PublicKey(self._get_address(raw_pk), next_id, raw_pk["X"], raw_pk["Y"])
         return pk
 
-    def sign_transaction(self, tx, id: int):
+    def sign_transaction(self, transaction_dict, id: int):
         self._id_existing(id)
+        if not isinstance(transaction_dict, dict):
+            raise TypeError("tudwallet - Transaction given in unsupported format. Provide as dict or JSONLike")
 
         # TODO: implement
         return
@@ -82,7 +92,7 @@ class Wallet:
     def _id_existing(self, id):
         self._sync_wallets()
         if id not in self.cold_wallet.get_ids():
-            raise Exception("tudwallet - Derive session public/secret key with ID = " + id + " first!")
+            raise Exception("tudwallet - Derive session public/secret key with ID = " + str(id) + " first!")
 
 
 class _ColdWallet:
@@ -102,9 +112,7 @@ class _ColdWallet:
             raise Exception("Master Secret Key already created. You must use this function with overwrite=True to "
                             "create a new one")
         elif overwrite:
-            for root, dirs, files in os.walk(self.__base_directory):
-                for file in files:
-                    os.remove(os.path.join(root, file))
+            delete_files_in_folder(self.__base_directory)
 
         cww = ColdWalletWrapper()
         key = cww.master_gen()
@@ -134,10 +142,10 @@ class _ColdWallet:
 
         key_hash_map = {}
         if os.path.exists(self.__session_secret_file_path):
-            key_hash_map = get_dict_from_file(self.__session_secret_file_path)  # Init empty dict. Types: <String,
-            # BigInteger>. Written to file as <String, String>
+            key_hash_map = get_dict_from_file(self.__session_secret_file_path)
             if str(id) in key_hash_map:  # if key already derived return it directly from the key file
                 return hex(int(str(key_hash_map[str(id)])))
+
         last_state = id_state_map[str(id - 1)]
 
         master_sec_key = get_private_key_from_file(self.__master_secret_file_path)  # Type: java.math.BigInteger
@@ -168,6 +176,9 @@ class _ColdWallet:
             raise Exception("No state file exists. Call master_key_gen first!")
         return max(self.get_ids())
 
+    def get_base_path(self):
+        return self.__base_directory
+
     def get_state_path(self):
         return self.__state_file_path
 
@@ -184,7 +195,9 @@ class _HotWallet:
             os.mkdir(directory)
 
         self.__master_public_file_path = directory + MPK_FILE_NAME
+        self.__session_public_file_path = directory + SPK_FILE_NAME
         self.__state_file_path = directory + STATE_FILE_NAME
+        self.__base_directory = directory
 
     def public_key_derive(self, id):
         if not os.path.exists(self.__master_public_file_path):
@@ -193,13 +206,26 @@ class _HotWallet:
         id_state_map = get_dict_from_file(self.__state_file_path)
         last_state = id_state_map[str(self.get_max_id())]
 
+        key_hash_map = {}
+        if os.path.exists(self.__session_public_file_path):
+            key_hash_map = get_dict_from_file(self.__session_public_file_path)
+            if str(id) in key_hash_map:  # if key already derived return it directly from the key file
+                key = key_hash_map[str(id)].split(",")
+                x = hex(int(str(key[0])))
+                y = hex(int(str(key[1])))
+                return {"X": x, "Y": y}
+
         master_public_key = get_public_key_from_file(self.__master_public_file_path)
         pk = HotWalletWrapper().pk_derive(master_public_key, str(id), last_state)
         session_public_key = pk.getPublicKey()
-        next_state = pk.getState()
 
+        next_state = pk.getState()
         id_state_map[str(id)] = list(next_state)
         save_dict_to_file(self.__state_file_path, id_state_map)
+
+        key_hash_map[str(id)] = str(session_public_key.getPointX()) + "," + str(session_public_key.getPointY())
+        save_dict_to_file(self.__session_public_file_path, key_hash_map)
+
         return {"X": hex(int(str(session_public_key.getPointX()))), "Y": hex(int(str(session_public_key.getPointY())))}
 
     def get_state_path(self):
@@ -207,6 +233,9 @@ class _HotWallet:
 
     def get_mpk_path(self):
         return self.__master_public_file_path
+
+    def get_base_path(self):
+        return self.__base_directory
 
     def copy_state_to(self, path):
         copyfile(self.__state_file_path, path)
