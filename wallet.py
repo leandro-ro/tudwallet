@@ -54,14 +54,16 @@ class Wallet:
         pk = PublicKey(self._get_address(raw_pk), next_id, raw_pk["X"], raw_pk["Y"])
         return pk
 
-    def sign_transaction(self, tx, id):
+    def sign_transaction(self, tx, id: int):
         self._id_existing(id)
 
         # TODO: implement
         return
 
     def get_all_ids(self):
-        return self.hot_wallet.get_ids()
+        ids = self.hot_wallet.get_ids()
+        ids.pop(0)
+        return ids
 
     @staticmethod
     def _get_address(public_key: dict):
@@ -136,7 +138,7 @@ class _ColdWallet:
             # BigInteger>. Written to file as <String, String>
             if str(id) in key_hash_map:  # if key already derived return it directly from the key file
                 return hex(int(str(key_hash_map[str(id)])))
-        last_state = id_state_map[str(id - 1)]  # TODO: Check if this is correct
+        last_state = id_state_map[str(id - 1)]
 
         master_sec_key = get_private_key_from_file(self.__master_secret_file_path)  # Type: java.math.BigInteger
 
@@ -146,11 +148,13 @@ class _ColdWallet:
 
         return hex(int(str(key_hash_map[str(id)])))
 
-    def sign_transaction(self, tx, id):
+    def sign_transaction(self, id, transaction):
         if not os.path.exists(self.__master_secret_file_path):
             raise Exception("Wallet not initialized yet. Call master_key_gen first!")
 
         session_secret_key = get_dict_from_file(self.__session_secret_file_path)[str(id)]
+
+        ColdWalletWrapper().sign_transaction()
 
     def sign_message(self):
         pass
