@@ -1,6 +1,5 @@
-from wrapper import ColdWalletWrapper, HotWalletWrapper
+from wrapper import ColdWalletWrapper, HotWalletWrapper, hex_to_java_biginteger, coords_to_java_public_key, create_elliptic_curve_point
 from eth_utils import keccak
-import os
 from shutil import copyfile
 from utils import *
 
@@ -65,10 +64,20 @@ class Wallet:
     def sign_transaction(self, transaction_dict, id: int):
         self._id_existing(id)
         if not isinstance(transaction_dict, dict):
-            raise TypeError("tudwallet - Transaction given in unsupported format. Provide as dict or JSONLike")
+            raise TypeError("tudwallet - Transaction given in unsupported format. Provide as dict with keys: nonce, "
+                            "chainId, to, data, value, gas, and gasPrice.")
 
-        # TODO: implement
-        return
+        # TODO: Check if transaction_dict is valid transfer transaction
+
+        sk = self.secret_key_derive(id)
+        pk = self.public_key_derive(id)
+
+        if sk.id != pk.id:
+            raise Exception("Keys do not match")
+
+        sig = self.cold_wallet.sign_transaction("test", sk, pk)
+
+        return sig
 
     def get_all_ids(self):
         ids = self.hot_wallet.get_ids()
@@ -91,6 +100,8 @@ class Wallet:
 
     def _id_existing(self, id):
         self._sync_wallets()
+        if id == 0:
+            raise Exception("tudwallet - Requested ID is the initial one")
         if id not in self.cold_wallet.get_ids():
             raise Exception("tudwallet - Derive session public/secret key with ID = " + str(id) + " first!")
 
@@ -156,13 +167,14 @@ class _ColdWallet:
 
         return hex(int(str(key_hash_map[str(id)])))
 
-    def sign_transaction(self, id, transaction):
+    def sign_transaction(self, transaction, sk: PrivateKey, pk: PublicKey):
         if not os.path.exists(self.__master_secret_file_path):
             raise Exception("Wallet not initialized yet. Call master_key_gen first!")
 
-        session_secret_key = get_dict_from_file(self.__session_secret_file_path)[str(id)]
+        raw_state = get_dict_from_file(self.__state_file_path)[str(sk.id)]
+        jvm_pubkey = coords_to_java_public_key(pk.x, pk.y, raw_state)
 
-        ColdWalletWrapper().sign_transaction()
+        return ColdWalletWrapper().sign(transaction, hex_to_java_biginteger(sk.key), jvm_pubkey)
 
     def sign_message(self):
         pass

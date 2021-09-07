@@ -9,6 +9,7 @@ from com.ewallet.field import ColdWallet
 from com.ewallet.field import HotWallet
 from com.ewallet.field.util import SECP
 from com.ewallet.field.util import EllipticCurvePoint
+from com.ewallet.field.util import PublicKey
 from com.trident.crypto.field.element import FiniteFieldElementFactory
 
 
@@ -49,3 +50,12 @@ def create_elliptic_curve_point(x, y):
     converted_y = factory.createFrom(jpype.java.math.BigInteger(y))
 
     return EllipticCurvePoint.create(converted_x, converted_y)
+
+
+def hex_to_java_biginteger(hex_string):
+    return jpype.java.math.BigInteger(str(int(hex_string, 0)))
+
+
+def coords_to_java_public_key(x, y, raw_state: list):
+    curve_point = create_elliptic_curve_point(str(int(x, 0)), str(int(y, 0)))
+    return PublicKey(curve_point, jpype.java.bytes(raw_state))  # TODO: Check casting to bytes array - likely wrong
