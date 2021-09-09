@@ -1,5 +1,6 @@
 # Allow Java modules to be imported
 import jpype.imports
+from jpype import JString, JPackage, JArray
 
 # Start JVM with Java types on return
 jpype.startJVM("-ea", classpath=['lib/*'], convertStrings=False)
@@ -28,7 +29,7 @@ class ColdWalletWrapper:
         return self.cold_wallet.PKDerive(master_pk, id, state)
 
     def sign(self, msg, secret_key, public_key):
-        return self.cold_wallet.sign(msg, secret_key, public_key)
+        return self.cold_wallet.Sign(msg, secret_key, public_key)
 
 
 class HotWalletWrapper:
@@ -58,4 +59,24 @@ def hex_to_java_biginteger(hex_string):
 
 def coords_to_java_public_key(x, y, raw_state: list):
     curve_point = create_elliptic_curve_point(str(int(x, 0)), str(int(y, 0)))
-    return PublicKey(curve_point, jpype.java.bytes(raw_state))  # TODO: Check casting to bytes array - likely wrong
+    byte_array = _recover_state_from_list(raw_state)
+    return PublicKey(curve_point, byte_array)  # TODO: Check casting to bytes array - likely wrong
+
+
+def _recover_state_from_list(data: list):
+    converted = JArray(jpype.java.lang.Byte, 1)(len(data))
+    counter = 0
+    for item in data:
+        if item <= 0:
+            item = JString("-#" + str(hex(item * -1)).replace("0x", ""))
+        else:
+            item = JString(str(hex(item)))
+        converted[counter] = jpype.java.lang.Byte.decode(item)
+        counter += 1
+    translate = JPackage('org').apache.commons.lang.ArrayUtils
+    converted = translate.toPrimitive(converted)
+    return converted
+
+
+def to_jstring_in_bytes(msg: str):
+    return JString(msg).getBytes("utf-8")

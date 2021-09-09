@@ -1,4 +1,5 @@
-from wrapper import ColdWalletWrapper, HotWalletWrapper, hex_to_java_biginteger, coords_to_java_public_key, create_elliptic_curve_point
+from wrapper import ColdWalletWrapper, HotWalletWrapper, hex_to_java_biginteger, coords_to_java_public_key, \
+    to_jstring_in_bytes
 from eth_utils import keccak
 from shutil import copyfile
 from utils import *
@@ -75,7 +76,7 @@ class Wallet:
         if sk.id != pk.id:
             raise Exception("Keys do not match")
 
-        sig = self.cold_wallet.sign_transaction("test", sk, pk)
+        sig = self.cold_wallet.sign_transaction("test", sk, pk)  # TODO: remove test text
 
         return sig
 
@@ -174,7 +175,9 @@ class _ColdWallet:
         raw_state = get_dict_from_file(self.__state_file_path)[str(sk.id)]
         jvm_pubkey = coords_to_java_public_key(pk.x, pk.y, raw_state)
 
-        return ColdWalletWrapper().sign(transaction, hex_to_java_biginteger(sk.key), jvm_pubkey)
+        return ColdWalletWrapper().sign(to_jstring_in_bytes(transaction),
+                                        hex_to_java_biginteger(sk.key),
+                                        jvm_pubkey.getPublicKey())
 
     def sign_message(self):
         pass
