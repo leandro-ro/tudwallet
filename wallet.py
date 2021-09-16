@@ -1,6 +1,11 @@
+import eth_account
+import eth_utils
+
 from wrapper import ColdWalletWrapper, HotWalletWrapper, hex_to_java_biginteger, coords_to_java_public_key, \
     to_jstring_in_bytes
 from eth_utils import keccak
+from eth_account._utils.legacy_transactions import serializable_unsigned_transaction_from_dict
+from cytoolz import dissoc
 from shutil import copyfile
 from utils import *
 
@@ -76,7 +81,7 @@ class Wallet:
         if sk.id != pk.id:
             raise Exception("Keys do not match")
 
-        sig = self.cold_wallet.sign_transaction("test", sk, pk)  # TODO: remove test text
+        sig = self.cold_wallet.sign_transaction(transaction_dict, sk, pk)  # TODO: remove test text
 
         return sig
 
@@ -147,8 +152,7 @@ class _ColdWallet:
             key_file.close()
 
     def secret_key_derive(self, id):
-        if not os.path.exists(self.__master_secret_file_path):
-            raise Exception("Wallet not initialized yet. Call master_key_gen first!")
+        self._check_initialization()
 
         id_state_map = get_dict_from_file(self.__state_file_path)
 
@@ -168,19 +172,39 @@ class _ColdWallet:
 
         return hex(int(str(key_hash_map[str(id)])))
 
-    def sign_transaction(self, transaction, sk: PrivateKey, pk: PublicKey):
-        if not os.path.exists(self.__master_secret_file_path):
-            raise Exception("Wallet not initialized yet. Call master_key_gen first!")
+    def sign_transaction(self, transaction_dict: dict, sk: PrivateKey, pk: PublicKey):
+        self._check_initialization()
 
         raw_state = get_dict_from_file(self.__state_file_path)[str(sk.id)]
         jvm_pubkey = coords_to_java_public_key(pk.x, pk.y, raw_state)
 
-        return ColdWalletWrapper().sign(to_jstring_in_bytes(transaction),
+        # allow from field, *only* if it matches the private key
+        if 'from' in transaction_dict:
+            if transaction_dict['from'] == pk.address:
+                sanitized_transaction = dissoc(transaction_dict, 'from')
+            else:
+                raise TypeError("from field must match key's %s, but it was %s" % (
+                    pk.address,
+                    transaction_dict['from'],
+                ))
+        else:
+            sanitized_transaction = transaction_dict
+
+        tx = serializable_unsigned_transaction_from_dict(sanitized_transaction)
+
+        return ColdWalletWrapper().sign(to_jstring_in_bytes(tx),
                                         hex_to_java_biginteger(sk.key),
                                         jvm_pubkey.getPublicKey())
 
-    def sign_message(self):
-        pass
+    def sign_message(self, message: str, sk: PrivateKey, pk: PublicKey):
+        self._check_initialization()
+
+        raw_state = get_dict_from_file(self.__state_file_path)[str(sk.id)]
+        jvm_pubkey = coords_to_java_public_key(pk.x, pk.y, raw_state)
+
+        return ColdWalletWrapper().sign(to_jstring_in_bytes(message),
+                                        hex_to_java_biginteger(sk.key),
+                                        jvm_pubkey.getPublicKey())
 
     def get_ids(self):
         id_state_map = get_dict_from_file(self.__state_file_path)
@@ -202,6 +226,10 @@ class _ColdWallet:
 
     def copy_mpk_to(self, path):
         copyfile(self.__master_public_file_path, path)
+
+    def _check_initialization(self):
+        if not os.path.exists(self.__master_secret_file_path):
+            raise Exception("Wallet not initialized yet. Call master_key_gen first!")
 
 
 class _HotWallet:
