@@ -22,48 +22,48 @@ class Wallet:
         if not os.path.exists(base_directory):
             os.mkdir(base_directory)
 
-        self.cold_wallet = _ColdWallet(base_directory + "ColdWalletData/")
-        self.hot_wallet = _HotWallet(base_directory + "HotWalletData/")
-        self.cold_wallet_synced = False
+        self.__cold_wallet = _ColdWallet(base_directory + "ColdWalletData/")
+        self.__hot_wallet = _HotWallet(base_directory + "HotWalletData/")
+        self.__cold_wallet_synced = False
 
     def generate_master_key(self, overwrite=False):
-        self.cold_wallet.master_key_gen(overwrite=overwrite)  # Potential overwrite exception already raised here
+        self.__cold_wallet.master_key_gen(overwrite=overwrite)  # Potential overwrite exception already raised here
 
         if overwrite:
-            delete_files_in_folder(self.hot_wallet.get_base_path())
+            delete_files_in_folder(self.__hot_wallet.get_base_path())
 
-        self.cold_wallet.copy_state_to(self.hot_wallet.get_state_path())  # Transfer initial state
-        self.cold_wallet.copy_mpk_to(self.hot_wallet.get_mpk_path())  # Init hot_wallet with MPK
-        self.cold_wallet_synced = True  # The initial state is the same for both wallets
+        self.__cold_wallet.copy_state_to(self.__hot_wallet.get_state_path())  # Transfer initial state
+        self.__cold_wallet.copy_mpk_to(self.__hot_wallet.get_mpk_path())  # Init hot_wallet with MPK
+        self.__cold_wallet_synced = True  # The initial state is the same for both wallets
 
     def secret_key_derive(self, id=None):
         self._sync_wallets()
 
         if id is None:
-            max_id = self.cold_wallet.get_max_id()
-            sk_raw = self.cold_wallet.secret_key_derive(max_id)
+            max_id = self.__cold_wallet.get_max_id()
+            sk_raw = self.__cold_wallet.secret_key_derive(max_id)
             return PrivateKey(key=sk_raw, id=max_id)
-        if id not in self.cold_wallet.get_ids():
+        if id not in self.__cold_wallet.get_ids():
             raise Exception("tudwallet - Derive session public key with ID = " + str(id) + " first!")
 
-        sk_raw = self.cold_wallet.secret_key_derive(id)
+        sk_raw = self.__cold_wallet.secret_key_derive(id)
         return PrivateKey(key=sk_raw, id=id)
 
     def public_key_derive(self, id=None):
-        max_id = self.hot_wallet.get_max_id()
+        max_id = self.__hot_wallet.get_max_id()
         if id is not None:
             if id <= max_id:
-                if id not in self.hot_wallet.get_ids():
+                if id not in self.__hot_wallet.get_ids():
                     raise Exception("tudwallet - ID is lower then previous IDs. Choose ID higher than: " + str(max_id))
                 else:
-                    raw_pk = self.hot_wallet.public_key_derive(id)
+                    raw_pk = self.__hot_wallet.public_key_derive(id)
                     return PublicKey(self._get_address(raw_pk), id, raw_pk["X"], raw_pk["Y"])
             next_id = id
         else:
             next_id = max_id + 1
 
-        self.cold_wallet_synced = False
-        raw_pk = self.hot_wallet.public_key_derive(next_id)
+        self.__cold_wallet_synced = False
+        raw_pk = self.__hot_wallet.public_key_derive(next_id)
         pk = PublicKey(self._get_address(raw_pk), next_id, raw_pk["X"], raw_pk["Y"])
         return pk
 
@@ -81,12 +81,12 @@ class Wallet:
         if sk.id != pk.id:
             raise Exception("Keys do not match")
 
-        sig = self.cold_wallet.sign_transaction(transaction_dict, sk, pk)  # TODO: remove test text
+        sig = self.__cold_wallet.sign_transaction(transaction_dict, sk, pk)  # TODO: remove test text
 
         return sig
 
     def get_all_ids(self):
-        ids = self.hot_wallet.get_ids()
+        ids = self.__hot_wallet.get_ids()
         ids.pop(0)
         return ids
 
@@ -99,16 +99,16 @@ class Wallet:
         return "0x" + keccak256.hex()[24:]
 
     def _sync_wallets(self):
-        if self.cold_wallet_synced:
+        if self.__cold_wallet_synced:
             return
-        self.hot_wallet.copy_state_to(self.cold_wallet.get_state_path())  # Copy state of hot wallet to cold wallet
-        self.cold_wallet_synced = True
+        self.__hot_wallet.copy_state_to(self.__cold_wallet.get_state_path())  # Copy state of hot wallet to cold wallet
+        self.__cold_wallet_synced = True
 
     def _id_existing(self, id):
         self._sync_wallets()
         if id == 0:
             raise Exception("tudwallet - Requested ID is the initial one")
-        if id not in self.cold_wallet.get_ids():
+        if id not in self.__cold_wallet.get_ids():
             raise Exception("tudwallet - Derive session public/secret key with ID = " + str(id) + " first!")
 
 
