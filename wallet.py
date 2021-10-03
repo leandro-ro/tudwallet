@@ -1,13 +1,19 @@
-import eth_account
-import eth_utils
+import rlp
 
-from wrapper import ColdWalletWrapper, HotWalletWrapper, hex_to_java_biginteger, coords_to_java_public_key, \
-    to_jstring_in_bytes
+from wrapper import (
+    ColdWalletWrapper,
+    HotWalletWrapper,
+    hex_to_java_biginteger,
+    coords_to_java_public_key,
+    to_jstring_in_bytes,
+)
+
 from eth_utils import keccak
-from eth_account._utils.legacy_transactions import serializable_unsigned_transaction_from_dict
 from cytoolz import dissoc
 from shutil import copyfile
 from utils import *
+from lib.transaction_processing.serialize import serializable_unsigned_transaction_from_dict
+from ethereum.transactions import Transaction
 
 MPK_FILE_NAME = "MPK.key"  # Master Public Key
 MSK_FILE_NAME = "MSK.key"  # Master Secret Key
@@ -190,7 +196,7 @@ class _ColdWallet:
         else:
             sanitized_transaction = transaction_dict
 
-        tx = serializable_unsigned_transaction_from_dict(sanitized_transaction)
+        # tx = serializable_unsigned_transaction_from_dict(sanitized_transaction)
 
         return ColdWalletWrapper().sign(to_jstring_in_bytes(tx),
                                         hex_to_java_biginteger(sk.key),
