@@ -1,4 +1,5 @@
 import os
+
 import jpype, json
 from wrapper import create_elliptic_curve_point
 from dataclasses import dataclass
@@ -59,7 +60,3 @@ def delete_files_in_folder(path):
     for root, dirs, files in os.walk(path):
         for file in files:
             os.remove(os.path.join(root, file))
-
-
-# Following code is partly taken from the eth_account library and provides the wallet with transaction serialization
-
