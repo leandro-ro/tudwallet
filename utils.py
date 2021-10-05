@@ -1,8 +1,10 @@
 import os
-
-import jpype, json
-from wrapper import create_elliptic_curve_point
 from dataclasses import dataclass
+
+import jpype
+import json
+
+from wrapper import create_elliptic_curve_point
 
 
 @dataclass

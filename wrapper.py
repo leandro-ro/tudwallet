@@ -60,7 +60,7 @@ def hex_to_java_biginteger(hex_string):
 def coords_to_java_public_key(x, y, raw_state: list):
     curve_point = create_elliptic_curve_point(str(int(x, 0)), str(int(y, 0)))
     byte_array = _recover_state_from_list(raw_state)
-    return PublicKey(curve_point, byte_array)  # TODO: Check casting to bytes array - likely wrong
+    return PublicKey(curve_point, byte_array)
 
 
 def _recover_state_from_list(data: list):
