@@ -1,13 +1,14 @@
-import eth_account
-import eth_utils
-
 from wrapper import ColdWalletWrapper, HotWalletWrapper, hex_to_java_biginteger, coords_to_java_public_key, \
     to_jstring_in_bytes
 from eth_utils import keccak
-from eth_account._utils.legacy_transactions import serializable_unsigned_transaction_from_dict
+from lib.transactions import serializable_unsigned_transaction_from_dict, encode_transaction
 from cytoolz import dissoc
 from shutil import copyfile
 from utils import *
+from hexbytes import HexBytes
+from eth_account.datastructures import SignedMessage, SignedTransaction
+from eth_account import account
+from eth_account.messages import encode_defunct
 
 MPK_FILE_NAME = "MPK.key"  # Master Public Key
 MSK_FILE_NAME = "MSK.key"  # Master Secret Key
@@ -73,15 +74,20 @@ class Wallet:
             raise TypeError("tudwallet - Transaction given in unsupported format. Provide as dict with keys: nonce, "
                             "chainId, to, data, value, gas, and gasPrice.")
 
-        # TODO: Check if transaction_dict is valid transfer transaction
+        sk = self.secret_key_derive(id)
+        pk = self.public_key_derive(id)
+
+        sig = self.__cold_wallet.sign_transaction(transaction_dict, sk, pk)  # TODO: remove test text
+
+        return sig
+
+    def sign_message(self, message: str, id: int):
+        self._id_existing(id)
 
         sk = self.secret_key_derive(id)
         pk = self.public_key_derive(id)
 
-        if sk.id != pk.id:
-            raise Exception("Keys do not match")
-
-        sig = self.__cold_wallet.sign_transaction(transaction_dict, sk, pk)  # TODO: remove test text
+        sig = self.__cold_wallet.sign_message(message, sk, pk)
 
         return sig
 
@@ -175,36 +181,77 @@ class _ColdWallet:
     def sign_transaction(self, transaction_dict: dict, sk: PrivateKey, pk: PublicKey):
         self._check_initialization()
 
-        raw_state = get_dict_from_file(self.__state_file_path)[str(sk.id)]
-        jvm_pubkey = coords_to_java_public_key(pk.x, pk.y, raw_state)
+        signature = account.Account.sign_transaction(transaction_dict, sk.key)
+        return signature
+
+        # TODO: Check possibility of using original wallet implementation for signing
+        # raw_state = get_dict_from_file(self.__state_file_path)[str(sk.id)]
+        # jvm_pubkey = coords_to_java_public_key(pk.x, pk.y, raw_state)
 
         # allow from field, *only* if it matches the private key
-        if 'from' in transaction_dict:
-            if transaction_dict['from'] == pk.address:
-                sanitized_transaction = dissoc(transaction_dict, 'from')
-            else:
-                raise TypeError("from field must match key's %s, but it was %s" % (
-                    pk.address,
-                    transaction_dict['from'],
-                ))
-        else:
-            sanitized_transaction = transaction_dict
+        # if 'from' in transaction_dict:
+        #     if transaction_dict['from'] == pk.address:
+        #         sanitized_transaction = dissoc(transaction_dict, 'from')
+        #     else:
+        #         raise TypeError("from field must match key's %s, but it was %s" % (
+        #             pk.address,
+        #             transaction_dict['from'],
+        #         ))
+        # else:
+        #     sanitized_transaction = transaction_dict
 
-        tx = serializable_unsigned_transaction_from_dict(sanitized_transaction)
+        # unsigned_tx = serializable_unsigned_transaction_from_dict(sanitized_transaction)
+        # unsigned_tx_hash = str(unsigned_tx.hash().hex()).replace("0x", "")
 
-        return ColdWalletWrapper().sign(to_jstring_in_bytes(tx),
-                                        hex_to_java_biginteger(sk.key),
-                                        jvm_pubkey.getPublicKey())
+        # raw_sig = ColdWalletWrapper().sign(to_jstring_in_bytes(unsigned_tx_hash),
+        #                                   hex_to_java_biginteger(sk.key),
+        #                                   jvm_pubkey.getPublicKey())
+        # raw_sig = raw_sig[64:]
+
+        # r = int(raw_sig[0:64], 16)
+        # s = int(raw_sig[64:], 16)
+        # v = 27
+
+        # encoded_tx = encode_transaction(unsigned_tx, vrs=(v, r, s))
+        # encoded_tx_hash = keccak(encoded_tx)
+
+        # return SignedTransaction(
+        #     rawTransaction=HexBytes(encoded_tx),
+        #     hash=HexBytes(encoded_tx_hash),
+        #     r=r,
+        #     s=s,
+        #     v=v,
+        # )
 
     def sign_message(self, message: str, sk: PrivateKey, pk: PublicKey):
         self._check_initialization()
 
-        raw_state = get_dict_from_file(self.__state_file_path)[str(sk.id)]
-        jvm_pubkey = coords_to_java_public_key(pk.x, pk.y, raw_state)
+        message_hash = encode_defunct(text=message)
+        return account.Account.sign_message(message_hash, sk.key)
 
-        return ColdWalletWrapper().sign(to_jstring_in_bytes(message),
-                                        hex_to_java_biginteger(sk.key),
-                                        jvm_pubkey.getPublicKey())
+        # TODO: Check possibility of using original wallet implementation for signing
+        # raw_state = get_dict_from_file(self.__state_file_path)[str(sk.id)]
+        # jvm_pubkey = coords_to_java_public_key(pk.x, pk.y, raw_state)
+
+        # message = "\x19Ethereum Signed Message:\n" + str(len(message)) + message
+        # hashed_message = keccak(hexstr=message.encode("utf-8").hex()).hex()
+        # print(hashed_message)
+        # raw_sig = ColdWalletWrapper().sign(to_jstring_in_bytes(hashed_message),
+        #                                   hex_to_java_biginteger(sk.key),
+        #                                   jvm_pubkey.getPublicKey())
+        # raw_sig = raw_sig[64:] + "1b"
+
+        # r = int(raw_sig[:64], 16)
+        # s = int(raw_sig[64:128], 16)
+        # v = 27
+
+        # return SignedMessage(
+        #     messageHash=HexBytes(hashed_message),
+        #     r=r,
+        #     s=s,
+        #     v=v,
+        #     signature=HexBytes(raw_sig),
+        # )
 
     def get_ids(self):
         id_state_map = get_dict_from_file(self.__state_file_path)
