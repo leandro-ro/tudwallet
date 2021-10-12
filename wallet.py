@@ -16,7 +16,7 @@ SIG_FILE_NAME = "signature.sig"
 
 
 class Wallet:
-    """The main (HD) wallet, which joins hot and cold wallet functionality by managing a common state"""
+    """The main (HD) wallet, which joins hot and cold wallet functionality by performing sync/state management"""
 
     def __init__(self, base_directory_hw="data/", base_directory_cw="data/"):
         """
@@ -328,7 +328,7 @@ class _ColdWallet:
         """
         Copies the state of the cold wallet to a given location.
         Note that this does not copy any keys! Only the state file.
-        This function is intended to be used for wallet synchronization.
+        This function is intended to to transfer the initial state for the hot wallet initialization.
 
         :param path: the path where the cold wallet state should be copied to
         """
@@ -355,7 +355,14 @@ class _ColdWallet:
 
 
 class _HotWallet:
+    """The hot wallet. Most notably implementing the wallets session public key derivation."""
+
     def __init__(self, directory):
+        """
+        Initializes the hot wallet keystore.
+
+        :param directory: the directory the hot wallet will use for keystore
+        """
         if not os.path.exists(directory):
             os.mkdir(directory)
 
@@ -365,6 +372,13 @@ class _HotWallet:
         self.__base_directory = directory
 
     def public_key_derive(self, id):
+        """
+        Derives a new session public key based on the given id. A master public key must be present.
+        If a key with the given id has been derived earlier, return it from keystore.
+
+        :param id: specifies the id (as int)
+        :return: the session public key coordinates in hex as dict
+        """
         if not os.path.exists(self.__master_public_file_path):
             raise Exception("Wallet not initialized yet. Call master_key_gen first!")
 
@@ -386,30 +400,63 @@ class _HotWallet:
 
         next_state = pk.getState()
         id_state_map[str(id)] = list(next_state)
-        save_dict_to_file(self.__state_file_path, id_state_map)
+        save_dict_to_file(self.__state_file_path, id_state_map)  # save new state in state file
 
         key_hash_map[str(id)] = str(session_public_key.getPointX()) + "," + str(session_public_key.getPointY())
-        save_dict_to_file(self.__session_public_file_path, key_hash_map)
+        save_dict_to_file(self.__session_public_file_path, key_hash_map)  # save new key in keystore
 
         return {"X": hex(int(str(session_public_key.getPointX()))), "Y": hex(int(str(session_public_key.getPointY())))}
 
     def get_state_path(self):
+        """
+        Getter: Get the path where the hot wallet state is stored.
+
+        :return: hot wallet's state path
+        """
         return self.__state_file_path
 
     def get_mpk_path(self):
+        """
+        Getter: Get the path where the master public key is stored.
+
+        :return: master public key path
+        """
         return self.__master_public_file_path
 
     def get_base_path(self):
+        """
+        Getter: Get the directory where all the data of the hot wallet is stored.
+
+        :return: the cold wallet directory
+        """
         return self.__base_directory
 
     def copy_state_to(self, path):
+        """
+        Copies the state of the hot wallet to a given location.
+        Note that this does not copy any keys! Only the state file.
+        This function is intended to be used for the wallet synchronization.
+
+        :param path: the path where the hot wallet state should be copied to
+        """
         copyfile(self.__state_file_path, path)
 
     def get_ids(self):
+        """
+        List all ids that were used to derive public session keys earlier
+
+        :return: already used ids
+        """
         id_state_map = get_dict_from_file(self.__state_file_path)
         return list(map(int, id_state_map.keys()))
 
     def get_max_id(self):
+        """
+        Extracts the highest/latest id of all ids that were used to derive public session keys earlier.
+        Note that a new key pair is always derived from a higher id than the previous key pair has been.
+
+        :return: latest public session key id
+        """
         if not os.path.exists(self.__state_file_path):
             raise Exception("No state file exists. Call master_key_gen first!")
         return max(self.get_ids())
