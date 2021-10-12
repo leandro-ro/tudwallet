@@ -194,7 +194,6 @@ class _ColdWallet:
         self.__master_public_file_path = directory + MPK_FILE_NAME
         self.__state_file_path = directory + STATE_FILE_NAME
         self.__session_secret_file_path = directory + SSK_FILE_NAME
-        self.__signature_file_path = directory + SIG_FILE_NAME
         self.__base_directory = directory
 
     def master_key_gen(self, overwrite=False):
