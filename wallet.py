@@ -36,7 +36,7 @@ class Wallet:
 
     def generate_master_key(self, overwrite=False):
         """
-        Generate the master key pair of the wallet
+        Generate the master key pair of the wallet.
 
         :param overwrite: replace a possibly existing key pair (or not)
         """
@@ -52,8 +52,8 @@ class Wallet:
     def secret_key_derive(self, id=None):
         """
         Derives a new session secret key based on the given id.
-        If no id is given, create the session secret key for the last derived session public key
-        If the id is already existing, return the key from keystore
+        If no id is given, create the session secret key for the last derived session public key.
+        If the id is already existing, return the key from keystore.
 
         :param id: specifies the id (as int)
         :return: the session private key as dataclass "PrivateKey"
@@ -78,8 +78,8 @@ class Wallet:
     def public_key_derive(self, id=None):
         """
         Derives a new session public key based on the given id.
-        If no id is given, create the session public key for the next possible id (= old_id + 1)
-        If the id is already existing, return the key from keystore
+        If no id is given, create the session public key for the next possible id (= old_id + 1).
+        If the id is already existing, return the key from keystore.
 
         :param id: specifies the id
         :return: the session public key as dataclass "PublicKey"
@@ -133,7 +133,7 @@ class Wallet:
 
     def get_all_ids(self):
         """
-        Learn all ids of already derived session public keys
+        Learn all ids of already derived session public keys.
 
         :return: all ids used to derive public keys
         """
@@ -144,7 +144,7 @@ class Wallet:
     @staticmethod
     def _get_address(public_key: dict):
         """
-        Generates the Ethereum address from a given public key
+        Generates the Ethereum address from a given public key.
 
         :param public_key: containing x and y coordinates
         :return: the Ethereum address of the given public key
@@ -157,7 +157,7 @@ class Wallet:
 
     def _sync_wallets(self):
         """
-        Sync the hot wallet with the cold wallet by transferring the state
+        Sync the hot wallet with the cold wallet by transferring the state.
         """
         if self.__cold_wallet_synced:  # Mitigate unnecessary access to the cold wallet
             return
@@ -179,7 +179,14 @@ class Wallet:
 
 
 class _ColdWallet:
+    """The cold wallet. Most notably implementing the wallets signing functionality."""
+
     def __init__(self, directory):
+        """
+        Initializes the cold wallet keystore.
+
+        :param directory: the directory the cold wallet will use for keystore
+        """
         if not os.path.exists(directory):
             os.mkdir(directory)
 
@@ -191,6 +198,12 @@ class _ColdWallet:
         self.__base_directory = directory
 
     def master_key_gen(self, overwrite=False):
+        """
+        Generate the master key pair of the wallet.
+        If overwrite is False but there is already a key pair existing an exception is raised.
+
+        :param overwrite: replace a possibly existing key pair
+        """
         if not overwrite and os.path.exists(self.__master_secret_file_path):
             raise Exception("Master Secret Key already created. You must use this function with overwrite=True to "
                             "create a new one")
@@ -218,7 +231,14 @@ class _ColdWallet:
             key_file.close()
 
     def secret_key_derive(self, id):
-        self._check_initialization()
+        """
+        Derives a new session secret key based on the given id. A master key pair must be present.
+        If a key with the given id has been derived earlier, return it from keystore.
+
+        :param id: specifies the id (as int)
+        :return: the session private key in hex
+        """
+        self._check_initialization()  # Check if master key pair present
 
         id_state_map = get_dict_from_file(self.__state_file_path)
 
@@ -234,44 +254,102 @@ class _ColdWallet:
 
         session_secret_key = ColdWalletWrapper().sk_derive(master_sec_key, str(id), last_state).getSecretKey()
         key_hash_map[str(id)] = str(session_secret_key)
-        save_dict_to_file(self.__session_secret_file_path, key_hash_map)
+        save_dict_to_file(self.__session_secret_file_path, key_hash_map)  # Add the new key to keystore
 
         return hex(int(str(key_hash_map[str(id)])))
 
     def sign_transaction(self, transaction_dict: dict, sk: PrivateKey):
+        """
+        Sign a transaction which is given as a dict.
+        Currently using eth_account's signing functionality.
+        Might switch to the wrapper.py signing functionality in future work.
+
+        :param dict transaction_dict: the ethereum transaction
+        :param sk: the session secret key as PrivateKey dataclass
+        :return: the signed transaction
+        """
         self._check_initialization()
 
         signature = account.Account.sign_transaction(transaction_dict, sk.key)
         return signature
 
     def sign_message(self, message: str, sk: PrivateKey):
+        """
+        Sign a message given as string.
+        Currently using eth_account's signing functionality.
+        Might switch to the wrapper.py signing functionality in future work.
+
+        :param message: the message to be signed
+        :param sk: the session secret key as PrivateKey dataclass
+        :return: the signed message
+        """
         self._check_initialization()
 
         message_hash = encode_defunct(text=message)
         return account.Account.sign_message(message_hash, sk.key)
 
     def get_ids(self):
+        """
+        List all ids that were used to derive keys earlier
+
+        :return: already used ids
+        """
         id_state_map = get_dict_from_file(self.__state_file_path)
         return list(map(int, id_state_map.keys()))
 
     def get_max_id(self):
+        """
+        Extracts the highest/latest id of all ids that were used to derive keys earlier.
+        Note that a new key pair is always derived from a higher id than the previous key pair has been.
+
+        :return: latest id
+        """
         if not os.path.exists(self.__state_file_path):
             raise Exception("No state file exists. Call master_key_gen first!")
         return max(self.get_ids())
 
     def get_base_path(self):
+        """
+        Getter: Get the directory where the data of the cold wallet is stored.
+
+        :return: the cold wallet directory
+        """
         return self.__base_directory
 
     def get_state_path(self):
+        """
+        Getter: Get the path where the cold wallet state is stored.
+
+        :return: cold wallet's state path
+        """
         return self.__state_file_path
 
     def copy_state_to(self, path):
+        """
+        Copies the state of the cold wallet to a given location.
+        Note that this does not copy any keys! Only the state file.
+        This function is intended to be used for wallet synchronization.
+
+        :param path: the path where the cold wallet state should be copied to
+        """
         copyfile(self.__state_file_path, path)
 
     def copy_mpk_to(self, path):
+        """
+        Copies the master public key to a given location.
+        Note that this does not copy the master secret key!
+        This function is intended to be used for the hot wallet initialization.
+
+        :param path: the path where the master public key should be copied to
+        """
         copyfile(self.__master_public_file_path, path)
 
     def _check_initialization(self):
+        """
+        Check if the wallet is initialized.
+        The wallet is initialized iff the master key is existing inside the cold wallet directory.
+        If this function is called and the condition is not met, an exception is raised.
+        """
         if not os.path.exists(self.__master_secret_file_path):
             raise Exception("Wallet not initialized yet. Call master_key_gen first!")
 
