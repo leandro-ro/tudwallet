@@ -12,7 +12,6 @@ MSK_FILE_NAME = "MSK.key"  # Master Secret Key
 SSK_FILE_NAME = "SecretKeyID.key"  # Session Secret Keys
 SPK_FILE_NAME = "PublicKeyID.key"  # Session Public Keys
 STATE_FILE_NAME = "state.txt"
-SIG_FILE_NAME = "signature.sig"
 
 
 class Wallet:
