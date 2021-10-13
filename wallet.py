@@ -246,7 +246,7 @@ class _ColdWallet:
             if str(id) in key_hash_map:  # if key already derived return it directly from the key file
                 return hex(int(str(key_hash_map[str(id)])))
 
-        last_state = id_state_map[str(id - 1)]
+        last_state = id_state_map[str(self.get_max_id())]
 
         master_sec_key = get_private_key_from_file(self.__master_secret_file_path)  # Type: java.math.BigInteger
 
