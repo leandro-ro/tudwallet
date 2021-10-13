@@ -13,7 +13,7 @@ class TestJvm(unittest.TestCase):
         key_type = str(type(sec_key))
         key_length = len(str(sec_key.toString()))
         self.assertTrue(key_type == '<java class \'java.math.BigInteger\'>')
-        self.assertTrue(key_length > 100)
+        self.assertTrue(key_length > 70)
 
         pub_key = test_key.getKeyPub()
         key_type = str(type(pub_key))
