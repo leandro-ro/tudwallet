@@ -3,10 +3,16 @@ import unittest
 
 
 class TestJvm(unittest.TestCase):
+    """Tests the connection to jpype's java virtual machine by accessing components of the imported java libraries."""
+
     cw = ColdWalletWrapper()
     hw = HotWalletWrapper()
 
-    def test_keygen(self):
+    def test_jvm_via_keygen(self):
+        """
+        Accesses the keygen functionality directly via the wrapper/e-wallet library.
+        This will only work if the jvm is running/jpype is configured correctly.
+        """
         test_key = self.cw.master_gen()
 
         sec_key = test_key.getKeySec()
