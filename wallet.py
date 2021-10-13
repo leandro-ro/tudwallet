@@ -4,8 +4,8 @@ from eth_account import account
 from eth_account.messages import encode_defunct
 from eth_utils import keccak
 
-from utils import *
-from wrapper import ColdWalletWrapper, HotWalletWrapper
+from utils.support import *
+from utils.wrapper import ColdWalletWrapper, HotWalletWrapper
 
 MPK_FILE_NAME = "MPK.key"  # Master Public Key
 MSK_FILE_NAME = "MSK.key"  # Master Secret Key

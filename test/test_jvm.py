@@ -1,4 +1,4 @@
-from wrapper import ColdWalletWrapper, HotWalletWrapper
+from utils.wrapper import ColdWalletWrapper, HotWalletWrapper
 import unittest
 
 

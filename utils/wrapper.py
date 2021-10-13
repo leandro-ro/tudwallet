@@ -3,7 +3,7 @@ import jpype.imports
 from jpype import JString, JPackage, JArray
 
 # Start JVM with Java types on return
-jpype.startJVM("-ea", classpath=['lib/*'], convertStrings=False)
+jpype.startJVM("-ea", classpath=['libs/*'], convertStrings=False)
 
 # import the Java modules
 from com.ewallet.field import ColdWallet
