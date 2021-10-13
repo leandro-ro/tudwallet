@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>wallet API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>wallet</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from shutil import copyfile
+
+from eth_account import account
+from eth_account.messages import encode_defunct
+from eth_utils import keccak
+
+from utils import *
+from wrapper import ColdWalletWrapper, HotWalletWrapper
+
+MPK_FILE_NAME = &#34;MPK.key&#34;  # Master Public Key
+MSK_FILE_NAME = &#34;MSK.key&#34;  # Master Secret Key
+SSK_FILE_NAME = &#34;SecretKeyID.key&#34;  # Session Secret Keys
+SPK_FILE_NAME = &#34;PublicKeyID.key&#34;  # Session Public Keys
+STATE_FILE_NAME = &#34;state.txt&#34;
+
+
+class Wallet:
+    &#34;&#34;&#34;The main (HD) wallet, which joins hot and cold wallet functionality by performing sync/state management&#34;&#34;&#34;
+
+    def __init__(self, base_directory_hw=&#34;data/&#34;, base_directory_cw=&#34;data/&#34;):
+        &#34;&#34;&#34;
+        Instantiate an hot &amp; cold wallet and prepare directories.
+
+        :param base_directory_hw: specifies the storage location of the hot wallet
+        :param base_directory_cw: specifies the storage location of the cold wallet
+        &#34;&#34;&#34;
+        if not os.path.exists(base_directory_hw):
+            os.mkdir(base_directory_hw)
+        if not os.path.exists(base_directory_cw):
+            os.mkdir(base_directory_cw)
+
+        self.__cold_wallet = _ColdWallet(base_directory_cw + &#34;ColdWalletData/&#34;)
+        self.__hot_wallet = _HotWallet(base_directory_hw + &#34;HotWalletData/&#34;)
+        self.__cold_wallet_synced = False
+
+    def generate_master_key(self, overwrite=False):
+        &#34;&#34;&#34;
+        Generate the master key pair of the wallet.
+
+        :param overwrite: replace a possibly existing key pair (or not)
+        &#34;&#34;&#34;
+        self.__cold_wallet.master_key_gen(overwrite=overwrite)  # Potential overwrite exception already raised here
+
+        if overwrite:
+            delete_files_in_folder(self.__hot_wallet.get_base_path())
+
+        self.__cold_wallet.copy_state_to(self.__hot_wallet.get_state_path())  # Transfer initial state
+        self.__cold_wallet.copy_mpk_to(self.__hot_wallet.get_mpk_path())  # Init hot_wallet with MPK
+        self.__cold_wallet_synced = True  # The initial state is the same for both wallets
+
+    def secret_key_derive(self, id=None):
+        &#34;&#34;&#34;
+        Derives a new session secret key based on the given id.
+        If no id is given, create the session secret key for the last derived session public key.
+        If the id is already existing, return the key from keystore.
+
+        :param id: specifies the id (as int)
+        :return: the session private key as dataclass &#34;PrivateKey&#34;
+        &#34;&#34;&#34;
+        self._sync_wallets()  # Cold wallet must come &#34;online&#34; for secret key derive, therefore sync necessary
+
+        if id is None:  # if id is not specified create session secret key for latest (id) derived public key
+            max_id = self.__cold_wallet.get_max_id()
+
+            if max_id &lt; 1:  # If no public key has been derived throw exception
+                raise Exception(&#34;tudwallet - Derive session public key first!&#34;)
+
+            sk_raw = self.__cold_wallet.secret_key_derive(max_id)
+            return PrivateKey(key=sk_raw, id=max_id)
+
+        if id not in self.__cold_wallet.get_ids():  # if there is no public key derived from given id throw Exception
+            raise Exception(&#34;tudwallet - Derive session public key with ID = &#34; + str(id) + &#34; first!&#34;)
+
+        sk_raw = self.__cold_wallet.secret_key_derive(id)
+        return PrivateKey(key=sk_raw, id=id)
+
+    def public_key_derive(self, id=None):
+        &#34;&#34;&#34;
+        Derives a new session public key based on the given id.
+        If no id is given, create the session public key for the next possible id (= old_id + 1).
+        If the id is already existing, return the key from keystore.
+
+        :param id: specifies the id
+        :return: the session public key as dataclass &#34;PublicKey&#34;
+        &#34;&#34;&#34;
+        max_id = self.__hot_wallet.get_max_id()
+        if id is not None:
+            if id &lt;= max_id:  # in this case, check if a key from this id is already derived.
+                if id not in self.__hot_wallet.get_ids():  # If not, throw an Exception
+                    raise Exception(&#34;tudwallet - ID is lower then previous IDs. Choose ID higher than: &#34; + str(max_id))
+                else:  # If yes, return the already derived key
+                    raw_pk = self.__hot_wallet.public_key_derive(id)
+                    return PublicKey(self._get_address(raw_pk), id, raw_pk[&#34;X&#34;], raw_pk[&#34;Y&#34;])
+            next_id = id
+        else:  # If no id is given, derive the next key with the next higher id (= old_id +1)
+            next_id = max_id + 1
+
+        self.__cold_wallet_synced = False  # Change happened in hot_wallet
+        raw_pk = self.__hot_wallet.public_key_derive(next_id)
+        return PublicKey(self._get_address(raw_pk), next_id, raw_pk[&#34;X&#34;], raw_pk[&#34;Y&#34;])
+
+    def sign_transaction(self, transaction_dict, id: int):
+        &#34;&#34;&#34;
+        Generates a ECDSA signature for the given transaction based on a already derived key pair given by id.
+
+        :param dict transaction_dict: the transaction with nonce, chainId, to, data, value, gas, gasPrice, ...
+        :param id: id of an already derived session key pair
+        :return: the signed transaction, containing the rawTransaction, the transactionHash and v, r, s
+        &#34;&#34;&#34;
+        self._id_existing(id)
+        if not isinstance(transaction_dict, dict):
+            raise TypeError(&#34;tudwallet - Transaction given in unsupported format. Provide as dict with keys: nonce, &#34;
+                            &#34;chainId, to, data, value, gas, and gasPrice.&#34;)
+
+        sk = self.secret_key_derive(id)  # Note that in this case no new key is derived. We only fetch the &#34;old&#34; one
+        sig = self.__cold_wallet.sign_transaction(transaction_dict, sk)
+        return sig
+
+    def sign_message(self, message: str, id: int):
+        &#34;&#34;&#34;
+        Generates a ECDSA signature for the given message based on a already derived key pair given by id.
+
+        :param message: a message given as string
+        :param id: id of an already derived session key pair
+        :return: the signed message, containing the messageHash, the signature in Hex and v, r, s
+        &#34;&#34;&#34;
+        self._id_existing(id)
+
+        sk = self.secret_key_derive(id)  # Note that in this case no new key is derived. We only fetch the &#34;old&#34; one
+        sig = self.__cold_wallet.sign_message(message, sk)
+        return sig
+
+    def get_all_ids(self):
+        &#34;&#34;&#34;
+        Learn all ids of already derived session public keys.
+
+        :return: all ids used to derive public keys
+        &#34;&#34;&#34;
+        ids = self.__hot_wallet.get_ids()
+        ids.pop(0)  # 0 is always present because of the master key pair
+        return ids
+
+    @staticmethod
+    def _get_address(public_key: dict):
+        &#34;&#34;&#34;
+        Generates the Ethereum address from a given public key.
+
+        :param public_key: containing x and y coordinates
+        :return: the Ethereum address of the given public key
+        &#34;&#34;&#34;
+        x = public_key[&#34;X&#34;][2:]
+        y = public_key[&#34;Y&#34;][2:]
+        preimage = x + y
+        keccak256 = keccak(hexstr=preimage)
+        return &#34;0x&#34; + keccak256.hex()[24:]
+
+    def _sync_wallets(self):
+        &#34;&#34;&#34;
+        Sync the hot wallet with the cold wallet by transferring the state.
+        &#34;&#34;&#34;
+        if self.__cold_wallet_synced:  # Mitigate unnecessary access to the cold wallet
+            return
+        self.__hot_wallet.copy_state_to(self.__cold_wallet.get_state_path())  # Copy state of hot wallet to cold wallet
+        self.__cold_wallet_synced = True
+
+    def _id_existing(self, id):
+        &#34;&#34;&#34;
+        Check if a key pair is already derived from the given id. Both, public and private, keys are needed to be
+        derived first otherwise this function will raise an exception.
+
+        :param id: the id to be checked
+        &#34;&#34;&#34;
+        self._sync_wallets()
+        if id == 0:
+            raise Exception(&#34;tudwallet - Requested ID is the initial one&#34;)
+        if id not in self.__cold_wallet.get_ids():
+            raise Exception(&#34;tudwallet - Derive session public/secret key with ID = &#34; + str(id) + &#34; first!&#34;)
+
+
+class _ColdWallet:
+    &#34;&#34;&#34;The cold wallet. Most notably implementing the wallets signing functionality.&#34;&#34;&#34;
+
+    def __init__(self, directory):
+        &#34;&#34;&#34;
+        Initializes the cold wallet keystore.
+
+        :param directory: the directory the cold wallet will use for keystore
+        &#34;&#34;&#34;
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+
+        self.__master_secret_file_path = directory + MSK_FILE_NAME
+        self.__master_public_file_path = directory + MPK_FILE_NAME
+        self.__state_file_path = directory + STATE_FILE_NAME
+        self.__session_secret_file_path = directory + SSK_FILE_NAME
+        self.__base_directory = directory
+
+    def master_key_gen(self, overwrite=False):
+        &#34;&#34;&#34;
+        Generate the master key pair of the wallet.
+        If overwrite is False but there is already a key pair existing an exception is raised.
+
+        :param overwrite: replace a possibly existing key pair
+        &#34;&#34;&#34;
+        if not overwrite and os.path.exists(self.__master_secret_file_path):
+            raise Exception(&#34;Master Secret Key already created. You must use this function with overwrite=True to &#34;
+                            &#34;create a new one&#34;)
+        elif overwrite:
+            delete_files_in_folder(self.__base_directory)
+
+        cww = ColdWalletWrapper()
+        key = cww.master_gen()
+        state = key.getState()  # 32 Bytes
+
+        id_state_map = {0: list(state)}  # dict is the state data structure
+        save_dict_to_file(self.__state_file_path, id_state_map)  # write dict to file
+
+        sk = key.getKeySec()
+        pk = key.getKeyPub()
+
+        # write key pair to cold wallet
+        with open(self.__master_secret_file_path, &#39;w&#39;) as key_file:
+            key_file.write(str(sk.toString()))
+            key_file.close()
+
+        with open(self.__master_public_file_path, &#39;w&#39;) as key_file:
+            key_file.write(str(pk.getPointX().toString()) + &#39;\n&#39;)
+            key_file.write(str(pk.getPointY().toString()))
+            key_file.close()
+
+    def secret_key_derive(self, id):
+        &#34;&#34;&#34;
+        Derives a new session secret key based on the given id. A master key pair must be present.
+        If a key with the given id has been derived earlier, return it from keystore.
+
+        :param id: specifies the id (as int)
+        :return: the session private key in hex
+        &#34;&#34;&#34;
+        self._check_initialization()  # Check if master key pair present
+
+        id_state_map = get_dict_from_file(self.__state_file_path)
+
+        key_hash_map = {}
+        if os.path.exists(self.__session_secret_file_path):
+            key_hash_map = get_dict_from_file(self.__session_secret_file_path)
+            if str(id) in key_hash_map:  # if key already derived return it directly from the key file
+                return hex(int(str(key_hash_map[str(id)])))
+
+        last_state = id_state_map[str(id - 1)]
+
+        master_sec_key = get_private_key_from_file(self.__master_secret_file_path)  # Type: java.math.BigInteger
+
+        session_secret_key = ColdWalletWrapper().sk_derive(master_sec_key, str(id), last_state).getSecretKey()
+        key_hash_map[str(id)] = str(session_secret_key)
+        save_dict_to_file(self.__session_secret_file_path, key_hash_map)  # Add the new key to keystore
+
+        return hex(int(str(key_hash_map[str(id)])))
+
+    def sign_transaction(self, transaction_dict: dict, sk: PrivateKey):
+        &#34;&#34;&#34;
+        Sign a transaction which is given as a dict.
+        Currently using eth_account&#39;s signing functionality.
+        Might switch to the wrapper.py signing functionality in future work.
+
+        :param dict transaction_dict: the ethereum transaction
+        :param sk: the session secret key as PrivateKey dataclass
+        :return: the signed transaction
+        &#34;&#34;&#34;
+        self._check_initialization()
+
+        signature = account.Account.sign_transaction(transaction_dict, sk.key)
+        return signature
+
+    def sign_message(self, message: str, sk: PrivateKey):
+        &#34;&#34;&#34;
+        Sign a message given as string.
+        Currently using eth_account&#39;s signing functionality.
+        Might switch to the wrapper.py signing functionality in future work.
+
+        :param message: the message to be signed
+        :param sk: the session secret key as PrivateKey dataclass
+        :return: the signed message
+        &#34;&#34;&#34;
+        self._check_initialization()
+
+        message_hash = encode_defunct(text=message)
+        return account.Account.sign_message(message_hash, sk.key)
+
+    def get_ids(self):
+        &#34;&#34;&#34;
+        List all ids that were used to derive keys earlier
+
+        :return: already used ids
+        &#34;&#34;&#34;
+        id_state_map = get_dict_from_file(self.__state_file_path)
+        return list(map(int, id_state_map.keys()))
+
+    def get_max_id(self):
+        &#34;&#34;&#34;
+        Extracts the highest/latest id of all ids that were used to derive keys earlier.
+        Note that a new key pair is always derived from a higher id than the previous key pair has been.
+
+        :return: latest id
+        &#34;&#34;&#34;
+        if not os.path.exists(self.__state_file_path):
+            raise Exception(&#34;No state file exists. Call master_key_gen first!&#34;)
+        return max(self.get_ids())
+
+    def get_base_path(self):
+        &#34;&#34;&#34;
+        Getter: Get the directory where the data of the cold wallet is stored.
+
+        :return: the cold wallet directory
+        &#34;&#34;&#34;
+        return self.__base_directory
+
+    def get_state_path(self):
+        &#34;&#34;&#34;
+        Getter: Get the path where the cold wallet state is stored.
+
+        :return: cold wallet&#39;s state path
+        &#34;&#34;&#34;
+        return self.__state_file_path
+
+    def copy_state_to(self, path):
+        &#34;&#34;&#34;
+        Copies the state of the cold wallet to a given location.
+        Note that this does not copy any keys! Only the state file.
+        This function is intended to to transfer the initial state for the hot wallet initialization.
+
+        :param path: the path where the cold wallet state should be copied to
+        &#34;&#34;&#34;
+        copyfile(self.__state_file_path, path)
+
+    def copy_mpk_to(self, path):
+        &#34;&#34;&#34;
+        Copies the master public key to a given location.
+        Note that this does not copy the master secret key!
+        This function is intended to be used for the hot wallet initialization.
+
+        :param path: the path where the master public key should be copied to
+        &#34;&#34;&#34;
+        copyfile(self.__master_public_file_path, path)
+
+    def _check_initialization(self):
+        &#34;&#34;&#34;
+        Check if the wallet is initialized.
+        The wallet is initialized iff the master key is existing inside the cold wallet directory.
+        If this function is called and the condition is not met, an exception is raised.
+        &#34;&#34;&#34;
+        if not os.path.exists(self.__master_secret_file_path):
+            raise Exception(&#34;Wallet not initialized yet. Call master_key_gen first!&#34;)
+
+
+class _HotWallet:
+    &#34;&#34;&#34;The hot wallet. Most notably implementing the wallets session public key derivation.&#34;&#34;&#34;
+
+    def __init__(self, directory):
+        &#34;&#34;&#34;
+        Initializes the hot wallet keystore.
+
+        :param directory: the directory the hot wallet will use for keystore
+        &#34;&#34;&#34;
+        if not os.path.exists(directory):
+            os.mkdir(directory)
+
+        self.__master_public_file_path = directory + MPK_FILE_NAME
+        self.__session_public_file_path = directory + SPK_FILE_NAME
+        self.__state_file_path = directory + STATE_FILE_NAME
+        self.__base_directory = directory
+
+    def public_key_derive(self, id):
+        &#34;&#34;&#34;
+        Derives a new session public key based on the given id. A master public key must be present.
+        If a key with the given id has been derived earlier, return it from keystore.
+
+        :param id: specifies the id (as int)
+        :return: the session public key coordinates in hex as dict
+        &#34;&#34;&#34;
+        if not os.path.exists(self.__master_public_file_path):
+            raise Exception(&#34;Wallet not initialized yet. Call master_key_gen first!&#34;)
+
+        id_state_map = get_dict_from_file(self.__state_file_path)
+        last_state = id_state_map[str(self.get_max_id())]
+
+        key_hash_map = {}
+        if os.path.exists(self.__session_public_file_path):
+            key_hash_map = get_dict_from_file(self.__session_public_file_path)
+            if str(id) in key_hash_map:  # if key already derived return it directly from the key file
+                key = key_hash_map[str(id)].split(&#34;,&#34;)
+                x = hex(int(str(key[0])))
+                y = hex(int(str(key[1])))
+                return {&#34;X&#34;: x, &#34;Y&#34;: y}
+
+        master_public_key = get_public_key_from_file(self.__master_public_file_path)
+        pk = HotWalletWrapper().pk_derive(master_public_key, str(id), last_state)
+        session_public_key = pk.getPublicKey()
+
+        next_state = pk.getState()
+        id_state_map[str(id)] = list(next_state)
+        save_dict_to_file(self.__state_file_path, id_state_map)  # save new state in state file
+
+        key_hash_map[str(id)] = str(session_public_key.getPointX()) + &#34;,&#34; + str(session_public_key.getPointY())
+        save_dict_to_file(self.__session_public_file_path, key_hash_map)  # save new key in keystore
+
+        return {&#34;X&#34;: hex(int(str(session_public_key.getPointX()))), &#34;Y&#34;: hex(int(str(session_public_key.getPointY())))}
+
+    def get_state_path(self):
+        &#34;&#34;&#34;
+        Getter: Get the path where the hot wallet state is stored.
+
+        :return: hot wallet&#39;s state path
+        &#34;&#34;&#34;
+        return self.__state_file_path
+
+    def get_mpk_path(self):
+        &#34;&#34;&#34;
+        Getter: Get the path where the master public key is stored.
+
+        :return: master public key path
+        &#34;&#34;&#34;
+        return self.__master_public_file_path
+
+    def get_base_path(self):
+        &#34;&#34;&#34;
+        Getter: Get the directory where all the data of the hot wallet is stored.
+
+        :return: the cold wallet directory
+        &#34;&#34;&#34;
+        return self.__base_directory
+
+    def copy_state_to(self, path):
+        &#34;&#34;&#34;
+        Copies the state of the hot wallet to a given location.
+        Note that this does not copy any keys! Only the state file.
+        This function is intended to be used for the wallet synchronization.
+
+        :param path: the path where the hot wallet state should be copied to
+        &#34;&#34;&#34;
+        copyfile(self.__state_file_path, path)
+
+    def get_ids(self):
+        &#34;&#34;&#34;
+        List all ids that were used to derive public session keys earlier
+
+        :return: already used ids
+        &#34;&#34;&#34;
+        id_state_map = get_dict_from_file(self.__state_file_path)
+        return list(map(int, id_state_map.keys()))
+
+    def get_max_id(self):
+        &#34;&#34;&#34;
+        Extracts the highest/latest id of all ids that were used to derive public session keys earlier.
+        Note that a new key pair is always derived from a higher id than the previous key pair has been.
+
+        :return: latest public session key id
+        &#34;&#34;&#34;
+        if not os.path.exists(self.__state_file_path):
+            raise Exception(&#34;No state file exists. Call master_key_gen first!&#34;)
+        return max(self.get_ids())</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="wallet.Wallet"><code class="flex name class">
+<span>class <span class="ident">Wallet</span></span>
+<span>(</span><span>base_directory_hw='data/', base_directory_cw='data/')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>The main (HD) wallet, which joins hot and cold wallet functionality by performing sync/state management</p>
+<p>Instantiate an hot &amp; cold wallet and prepare directories.</p>
+<p>:param base_directory_hw: specifies the storage location of the hot wallet
+:param base_directory_cw: specifies the storage location of the cold wallet</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Wallet:
+    &#34;&#34;&#34;The main (HD) wallet, which joins hot and cold wallet functionality by performing sync/state management&#34;&#34;&#34;
+
+    def __init__(self, base_directory_hw=&#34;data/&#34;, base_directory_cw=&#34;data/&#34;):
+        &#34;&#34;&#34;
+        Instantiate an hot &amp; cold wallet and prepare directories.
+
+        :param base_directory_hw: specifies the storage location of the hot wallet
+        :param base_directory_cw: specifies the storage location of the cold wallet
+        &#34;&#34;&#34;
+        if not os.path.exists(base_directory_hw):
+            os.mkdir(base_directory_hw)
+        if not os.path.exists(base_directory_cw):
+            os.mkdir(base_directory_cw)
+
+        self.__cold_wallet = _ColdWallet(base_directory_cw + &#34;ColdWalletData/&#34;)
+        self.__hot_wallet = _HotWallet(base_directory_hw + &#34;HotWalletData/&#34;)
+        self.__cold_wallet_synced = False
+
+    def generate_master_key(self, overwrite=False):
+        &#34;&#34;&#34;
+        Generate the master key pair of the wallet.
+
+        :param overwrite: replace a possibly existing key pair (or not)
+        &#34;&#34;&#34;
+        self.__cold_wallet.master_key_gen(overwrite=overwrite)  # Potential overwrite exception already raised here
+
+        if overwrite:
+            delete_files_in_folder(self.__hot_wallet.get_base_path())
+
+        self.__cold_wallet.copy_state_to(self.__hot_wallet.get_state_path())  # Transfer initial state
+        self.__cold_wallet.copy_mpk_to(self.__hot_wallet.get_mpk_path())  # Init hot_wallet with MPK
+        self.__cold_wallet_synced = True  # The initial state is the same for both wallets
+
+    def secret_key_derive(self, id=None):
+        &#34;&#34;&#34;
+        Derives a new session secret key based on the given id.
+        If no id is given, create the session secret key for the last derived session public key.
+        If the id is already existing, return the key from keystore.
+
+        :param id: specifies the id (as int)
+        :return: the session private key as dataclass &#34;PrivateKey&#34;
+        &#34;&#34;&#34;
+        self._sync_wallets()  # Cold wallet must come &#34;online&#34; for secret key derive, therefore sync necessary
+
+        if id is None:  # if id is not specified create session secret key for latest (id) derived public key
+            max_id = self.__cold_wallet.get_max_id()
+
+            if max_id &lt; 1:  # If no public key has been derived throw exception
+                raise Exception(&#34;tudwallet - Derive session public key first!&#34;)
+
+            sk_raw = self.__cold_wallet.secret_key_derive(max_id)
+            return PrivateKey(key=sk_raw, id=max_id)
+
+        if id not in self.__cold_wallet.get_ids():  # if there is no public key derived from given id throw Exception
+            raise Exception(&#34;tudwallet - Derive session public key with ID = &#34; + str(id) + &#34; first!&#34;)
+
+        sk_raw = self.__cold_wallet.secret_key_derive(id)
+        return PrivateKey(key=sk_raw, id=id)
+
+    def public_key_derive(self, id=None):
+        &#34;&#34;&#34;
+        Derives a new session public key based on the given id.
+        If no id is given, create the session public key for the next possible id (= old_id + 1).
+        If the id is already existing, return the key from keystore.
+
+        :param id: specifies the id
+        :return: the session public key as dataclass &#34;PublicKey&#34;
+        &#34;&#34;&#34;
+        max_id = self.__hot_wallet.get_max_id()
+        if id is not None:
+            if id &lt;= max_id:  # in this case, check if a key from this id is already derived.
+                if id not in self.__hot_wallet.get_ids():  # If not, throw an Exception
+                    raise Exception(&#34;tudwallet - ID is lower then previous IDs. Choose ID higher than: &#34; + str(max_id))
+                else:  # If yes, return the already derived key
+                    raw_pk = self.__hot_wallet.public_key_derive(id)
+                    return PublicKey(self._get_address(raw_pk), id, raw_pk[&#34;X&#34;], raw_pk[&#34;Y&#34;])
+            next_id = id
+        else:  # If no id is given, derive the next key with the next higher id (= old_id +1)
+            next_id = max_id + 1
+
+        self.__cold_wallet_synced = False  # Change happened in hot_wallet
+        raw_pk = self.__hot_wallet.public_key_derive(next_id)
+        return PublicKey(self._get_address(raw_pk), next_id, raw_pk[&#34;X&#34;], raw_pk[&#34;Y&#34;])
+
+    def sign_transaction(self, transaction_dict, id: int):
+        &#34;&#34;&#34;
+        Generates a ECDSA signature for the given transaction based on a already derived key pair given by id.
+
+        :param dict transaction_dict: the transaction with nonce, chainId, to, data, value, gas, gasPrice, ...
+        :param id: id of an already derived session key pair
+        :return: the signed transaction, containing the rawTransaction, the transactionHash and v, r, s
+        &#34;&#34;&#34;
+        self._id_existing(id)
+        if not isinstance(transaction_dict, dict):
+            raise TypeError(&#34;tudwallet - Transaction given in unsupported format. Provide as dict with keys: nonce, &#34;
+                            &#34;chainId, to, data, value, gas, and gasPrice.&#34;)
+
+        sk = self.secret_key_derive(id)  # Note that in this case no new key is derived. We only fetch the &#34;old&#34; one
+        sig = self.__cold_wallet.sign_transaction(transaction_dict, sk)
+        return sig
+
+    def sign_message(self, message: str, id: int):
+        &#34;&#34;&#34;
+        Generates a ECDSA signature for the given message based on a already derived key pair given by id.
+
+        :param message: a message given as string
+        :param id: id of an already derived session key pair
+        :return: the signed message, containing the messageHash, the signature in Hex and v, r, s
+        &#34;&#34;&#34;
+        self._id_existing(id)
+
+        sk = self.secret_key_derive(id)  # Note that in this case no new key is derived. We only fetch the &#34;old&#34; one
+        sig = self.__cold_wallet.sign_message(message, sk)
+        return sig
+
+    def get_all_ids(self):
+        &#34;&#34;&#34;
+        Learn all ids of already derived session public keys.
+
+        :return: all ids used to derive public keys
+        &#34;&#34;&#34;
+        ids = self.__hot_wallet.get_ids()
+        ids.pop(0)  # 0 is always present because of the master key pair
+        return ids
+
+    @staticmethod
+    def _get_address(public_key: dict):
+        &#34;&#34;&#34;
+        Generates the Ethereum address from a given public key.
+
+        :param public_key: containing x and y coordinates
+        :return: the Ethereum address of the given public key
+        &#34;&#34;&#34;
+        x = public_key[&#34;X&#34;][2:]
+        y = public_key[&#34;Y&#34;][2:]
+        preimage = x + y
+        keccak256 = keccak(hexstr=preimage)
+        return &#34;0x&#34; + keccak256.hex()[24:]
+
+    def _sync_wallets(self):
+        &#34;&#34;&#34;
+        Sync the hot wallet with the cold wallet by transferring the state.
+        &#34;&#34;&#34;
+        if self.__cold_wallet_synced:  # Mitigate unnecessary access to the cold wallet
+            return
+        self.__hot_wallet.copy_state_to(self.__cold_wallet.get_state_path())  # Copy state of hot wallet to cold wallet
+        self.__cold_wallet_synced = True
+
+    def _id_existing(self, id):
+        &#34;&#34;&#34;
+        Check if a key pair is already derived from the given id. Both, public and private, keys are needed to be
+        derived first otherwise this function will raise an exception.
+
+        :param id: the id to be checked
+        &#34;&#34;&#34;
+        self._sync_wallets()
+        if id == 0:
+            raise Exception(&#34;tudwallet - Requested ID is the initial one&#34;)
+        if id not in self.__cold_wallet.get_ids():
+            raise Exception(&#34;tudwallet - Derive session public/secret key with ID = &#34; + str(id) + &#34; first!&#34;)</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="wallet.Wallet.generate_master_key"><code class="name flex">
+<span>def <span class="ident">generate_master_key</span></span>(<span>self, overwrite=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generate the master key pair of the wallet.</p>
+<p>:param overwrite: replace a possibly existing key pair (or not)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def generate_master_key(self, overwrite=False):
+    &#34;&#34;&#34;
+    Generate the master key pair of the wallet.
+
+    :param overwrite: replace a possibly existing key pair (or not)
+    &#34;&#34;&#34;
+    self.__cold_wallet.master_key_gen(overwrite=overwrite)  # Potential overwrite exception already raised here
+
+    if overwrite:
+        delete_files_in_folder(self.__hot_wallet.get_base_path())
+
+    self.__cold_wallet.copy_state_to(self.__hot_wallet.get_state_path())  # Transfer initial state
+    self.__cold_wallet.copy_mpk_to(self.__hot_wallet.get_mpk_path())  # Init hot_wallet with MPK
+    self.__cold_wallet_synced = True  # The initial state is the same for both wallets</code></pre>
+</details>
+</dd>
+<dt id="wallet.Wallet.get_all_ids"><code class="name flex">
+<span>def <span class="ident">get_all_ids</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Learn all ids of already derived session public keys.</p>
+<p>:return: all ids used to derive public keys</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_all_ids(self):
+    &#34;&#34;&#34;
+    Learn all ids of already derived session public keys.
+
+    :return: all ids used to derive public keys
+    &#34;&#34;&#34;
+    ids = self.__hot_wallet.get_ids()
+    ids.pop(0)  # 0 is always present because of the master key pair
+    return ids</code></pre>
+</details>
+</dd>
+<dt id="wallet.Wallet.public_key_derive"><code class="name flex">
+<span>def <span class="ident">public_key_derive</span></span>(<span>self, id=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Derives a new session public key based on the given id.
+If no id is given, create the session public key for the next possible id (= old_id + 1).
+If the id is already existing, return the key from keystore.</p>
+<p>:param id: specifies the id
+:return: the session public key as dataclass "PublicKey"</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def public_key_derive(self, id=None):
+    &#34;&#34;&#34;
+    Derives a new session public key based on the given id.
+    If no id is given, create the session public key for the next possible id (= old_id + 1).
+    If the id is already existing, return the key from keystore.
+
+    :param id: specifies the id
+    :return: the session public key as dataclass &#34;PublicKey&#34;
+    &#34;&#34;&#34;
+    max_id = self.__hot_wallet.get_max_id()
+    if id is not None:
+        if id &lt;= max_id:  # in this case, check if a key from this id is already derived.
+            if id not in self.__hot_wallet.get_ids():  # If not, throw an Exception
+                raise Exception(&#34;tudwallet - ID is lower then previous IDs. Choose ID higher than: &#34; + str(max_id))
+            else:  # If yes, return the already derived key
+                raw_pk = self.__hot_wallet.public_key_derive(id)
+                return PublicKey(self._get_address(raw_pk), id, raw_pk[&#34;X&#34;], raw_pk[&#34;Y&#34;])
+        next_id = id
+    else:  # If no id is given, derive the next key with the next higher id (= old_id +1)
+        next_id = max_id + 1
+
+    self.__cold_wallet_synced = False  # Change happened in hot_wallet
+    raw_pk = self.__hot_wallet.public_key_derive(next_id)
+    return PublicKey(self._get_address(raw_pk), next_id, raw_pk[&#34;X&#34;], raw_pk[&#34;Y&#34;])</code></pre>
+</details>
+</dd>
+<dt id="wallet.Wallet.secret_key_derive"><code class="name flex">
+<span>def <span class="ident">secret_key_derive</span></span>(<span>self, id=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Derives a new session secret key based on the given id.
+If no id is given, create the session secret key for the last derived session public key.
+If the id is already existing, return the key from keystore.</p>
+<p>:param id: specifies the id (as int)
+:return: the session private key as dataclass "PrivateKey"</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def secret_key_derive(self, id=None):
+    &#34;&#34;&#34;
+    Derives a new session secret key based on the given id.
+    If no id is given, create the session secret key for the last derived session public key.
+    If the id is already existing, return the key from keystore.
+
+    :param id: specifies the id (as int)
+    :return: the session private key as dataclass &#34;PrivateKey&#34;
+    &#34;&#34;&#34;
+    self._sync_wallets()  # Cold wallet must come &#34;online&#34; for secret key derive, therefore sync necessary
+
+    if id is None:  # if id is not specified create session secret key for latest (id) derived public key
+        max_id = self.__cold_wallet.get_max_id()
+
+        if max_id &lt; 1:  # If no public key has been derived throw exception
+            raise Exception(&#34;tudwallet - Derive session public key first!&#34;)
+
+        sk_raw = self.__cold_wallet.secret_key_derive(max_id)
+        return PrivateKey(key=sk_raw, id=max_id)
+
+    if id not in self.__cold_wallet.get_ids():  # if there is no public key derived from given id throw Exception
+        raise Exception(&#34;tudwallet - Derive session public key with ID = &#34; + str(id) + &#34; first!&#34;)
+
+    sk_raw = self.__cold_wallet.secret_key_derive(id)
+    return PrivateKey(key=sk_raw, id=id)</code></pre>
+</details>
+</dd>
+<dt id="wallet.Wallet.sign_message"><code class="name flex">
+<span>def <span class="ident">sign_message</span></span>(<span>self, message: str, id: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generates a ECDSA signature for the given message based on a already derived key pair given by id.</p>
+<p>:param message: a message given as string
+:param id: id of an already derived session key pair
+:return: the signed message, containing the messageHash, the signature in Hex and v, r, s</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sign_message(self, message: str, id: int):
+    &#34;&#34;&#34;
+    Generates a ECDSA signature for the given message based on a already derived key pair given by id.
+
+    :param message: a message given as string
+    :param id: id of an already derived session key pair
+    :return: the signed message, containing the messageHash, the signature in Hex and v, r, s
+    &#34;&#34;&#34;
+    self._id_existing(id)
+
+    sk = self.secret_key_derive(id)  # Note that in this case no new key is derived. We only fetch the &#34;old&#34; one
+    sig = self.__cold_wallet.sign_message(message, sk)
+    return sig</code></pre>
+</details>
+</dd>
+<dt id="wallet.Wallet.sign_transaction"><code class="name flex">
+<span>def <span class="ident">sign_transaction</span></span>(<span>self, transaction_dict, id: int)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generates a ECDSA signature for the given transaction based on a already derived key pair given by id.</p>
+<p>:param dict transaction_dict: the transaction with nonce, chainId, to, data, value, gas, gasPrice, &hellip;
+:param id: id of an already derived session key pair
+:return: the signed transaction, containing the rawTransaction, the transactionHash and v, r, s</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def sign_transaction(self, transaction_dict, id: int):
+    &#34;&#34;&#34;
+    Generates a ECDSA signature for the given transaction based on a already derived key pair given by id.
+
+    :param dict transaction_dict: the transaction with nonce, chainId, to, data, value, gas, gasPrice, ...
+    :param id: id of an already derived session key pair
+    :return: the signed transaction, containing the rawTransaction, the transactionHash and v, r, s
+    &#34;&#34;&#34;
+    self._id_existing(id)
+    if not isinstance(transaction_dict, dict):
+        raise TypeError(&#34;tudwallet - Transaction given in unsupported format. Provide as dict with keys: nonce, &#34;
+                        &#34;chainId, to, data, value, gas, and gasPrice.&#34;)
+
+    sk = self.secret_key_derive(id)  # Note that in this case no new key is derived. We only fetch the &#34;old&#34; one
+    sig = self.__cold_wallet.sign_transaction(transaction_dict, sk)
+    return sig</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="wallet.Wallet" href="#wallet.Wallet">Wallet</a></code></h4>
+<ul class="two-column">
+<li><code><a title="wallet.Wallet.generate_master_key" href="#wallet.Wallet.generate_master_key">generate_master_key</a></code></li>
+<li><code><a title="wallet.Wallet.get_all_ids" href="#wallet.Wallet.get_all_ids">get_all_ids</a></code></li>
+<li><code><a title="wallet.Wallet.public_key_derive" href="#wallet.Wallet.public_key_derive">public_key_derive</a></code></li>
+<li><code><a title="wallet.Wallet.secret_key_derive" href="#wallet.Wallet.secret_key_derive">secret_key_derive</a></code></li>
+<li><code><a title="wallet.Wallet.sign_message" href="#wallet.Wallet.sign_message">sign_message</a></code></li>
+<li><code><a title="wallet.Wallet.sign_transaction" href="#wallet.Wallet.sign_transaction">sign_transaction</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
