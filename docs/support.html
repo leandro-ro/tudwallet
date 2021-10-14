@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>utils API documentation</title>
+<title>utils.support API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,7 +19,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>utils</code></h1>
+<h1 class="title">Module <code>utils.support</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -32,7 +32,7 @@ from dataclasses import dataclass
 import jpype
 import json
 
-from wrapper import create_elliptic_curve_point
+from .wrapper import create_elliptic_curve_point
 
 
 @dataclass
@@ -56,6 +56,7 @@ class PrivateKey:
 def save_dict_to_file(path, data: dict):
     &#34;&#34;&#34;
     Allows to store any dictionary in a file under the given path.
+    Note that all values are represented as string. E.g. if a key was 1, it is not &#34;1&#34;
 
     :param path: the path where the dictionary should be stored at
     :param dict data: the state to be stored
@@ -68,6 +69,7 @@ def save_dict_to_file(path, data: dict):
 def get_dict_from_file(path) -&gt; dict:
     &#34;&#34;&#34;
     Allows to load any dictionary (that has been stored via save_dict_to_file()) from a file under the given path.
+    Note that all values are represented as string. E.g. if a key was 1, it is not &#34;1&#34;
 
     :param path: the path where the file is located
     :return: the loaded dictionary
@@ -129,7 +131,7 @@ def delete_files_in_folder(path):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="utils.delete_files_in_folder"><code class="name flex">
+<dt id="utils.support.delete_files_in_folder"><code class="name flex">
 <span>def <span class="ident">delete_files_in_folder</span></span>(<span>path)</span>
 </code></dt>
 <dd>
@@ -158,11 +160,12 @@ Use with caution!</p>
             os.remove(os.path.join(root, file))</code></pre>
 </details>
 </dd>
-<dt id="utils.get_dict_from_file"><code class="name flex">
+<dt id="utils.support.get_dict_from_file"><code class="name flex">
 <span>def <span class="ident">get_dict_from_file</span></span>(<span>path) ‑> dict</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Allows to load any dictionary (that has been stored via save_dict_to_file()) from a file under the given path.</p>
+<div class="desc"><p>Allows to load any dictionary (that has been stored via save_dict_to_file()) from a file under the given path.
+Note that all values are represented as string. E.g. if a key was 1, it is not "1"</p>
 <p>:param path: the path where the file is located
 :return: the loaded dictionary</p></div>
 <details class="source">
@@ -172,6 +175,7 @@ Use with caution!</p>
 <pre><code class="python">def get_dict_from_file(path) -&gt; dict:
     &#34;&#34;&#34;
     Allows to load any dictionary (that has been stored via save_dict_to_file()) from a file under the given path.
+    Note that all values are represented as string. E.g. if a key was 1, it is not &#34;1&#34;
 
     :param path: the path where the file is located
     :return: the loaded dictionary
@@ -181,7 +185,7 @@ Use with caution!</p>
         return json.loads(data[0])</code></pre>
 </details>
 </dd>
-<dt id="utils.get_private_key_from_file"><code class="name flex">
+<dt id="utils.support.get_private_key_from_file"><code class="name flex">
 <span>def <span class="ident">get_private_key_from_file</span></span>(<span>path)</span>
 </code></dt>
 <dd>
@@ -207,7 +211,7 @@ Use with caution!</p>
     return data</code></pre>
 </details>
 </dd>
-<dt id="utils.get_public_key_from_file"><code class="name flex">
+<dt id="utils.support.get_public_key_from_file"><code class="name flex">
 <span>def <span class="ident">get_public_key_from_file</span></span>(<span>path)</span>
 </code></dt>
 <dd>
@@ -233,11 +237,12 @@ Use with caution!</p>
     return data</code></pre>
 </details>
 </dd>
-<dt id="utils.save_dict_to_file"><code class="name flex">
+<dt id="utils.support.save_dict_to_file"><code class="name flex">
 <span>def <span class="ident">save_dict_to_file</span></span>(<span>path, data: dict)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Allows to store any dictionary in a file under the given path.</p>
+<div class="desc"><p>Allows to store any dictionary in a file under the given path.
+Note that all values are represented as string. E.g. if a key was 1, it is not "1"</p>
 <p>:param path: the path where the dictionary should be stored at
 :param dict data: the state to be stored</p></div>
 <details class="source">
@@ -247,6 +252,7 @@ Use with caution!</p>
 <pre><code class="python">def save_dict_to_file(path, data: dict):
     &#34;&#34;&#34;
     Allows to store any dictionary in a file under the given path.
+    Note that all values are represented as string. E.g. if a key was 1, it is not &#34;1&#34;
 
     :param path: the path where the dictionary should be stored at
     :param dict data: the state to be stored
@@ -261,7 +267,7 @@ Use with caution!</p>
 <section>
 <h2 class="section-title" id="header-classes">Classes</h2>
 <dl>
-<dt id="utils.PrivateKey"><code class="flex name class">
+<dt id="utils.support.PrivateKey"><code class="flex name class">
 <span>class <span class="ident">PrivateKey</span></span>
 <span>(</span><span>key: str, id: int)</span>
 </code></dt>
@@ -281,17 +287,17 @@ class PrivateKey:
 </details>
 <h3>Class variables</h3>
 <dl>
-<dt id="utils.PrivateKey.id"><code class="name">var <span class="ident">id</span> : int</code></dt>
+<dt id="utils.support.PrivateKey.id"><code class="name">var <span class="ident">id</span> : int</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="utils.PrivateKey.key"><code class="name">var <span class="ident">key</span> : str</code></dt>
+<dt id="utils.support.PrivateKey.key"><code class="name">var <span class="ident">key</span> : str</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
 </dl>
 </dd>
-<dt id="utils.PublicKey"><code class="flex name class">
+<dt id="utils.support.PublicKey"><code class="flex name class">
 <span>class <span class="ident">PublicKey</span></span>
 <span>(</span><span>address: str, id: int, x: str, y: str)</span>
 </code></dt>
@@ -313,19 +319,19 @@ class PublicKey:
 </details>
 <h3>Class variables</h3>
 <dl>
-<dt id="utils.PublicKey.address"><code class="name">var <span class="ident">address</span> : str</code></dt>
+<dt id="utils.support.PublicKey.address"><code class="name">var <span class="ident">address</span> : str</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="utils.PublicKey.id"><code class="name">var <span class="ident">id</span> : int</code></dt>
+<dt id="utils.support.PublicKey.id"><code class="name">var <span class="ident">id</span> : int</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="utils.PublicKey.x"><code class="name">var <span class="ident">x</span> : str</code></dt>
+<dt id="utils.support.PublicKey.x"><code class="name">var <span class="ident">x</span> : str</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="utils.PublicKey.y"><code class="name">var <span class="ident">y</span> : str</code></dt>
+<dt id="utils.support.PublicKey.y"><code class="name">var <span class="ident">y</span> : str</code></dt>
 <dd>
 <div class="desc"></div>
 </dd>
@@ -342,29 +348,29 @@ class PublicKey:
 <ul id="index">
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="utils.delete_files_in_folder" href="#utils.delete_files_in_folder">delete_files_in_folder</a></code></li>
-<li><code><a title="utils.get_dict_from_file" href="#utils.get_dict_from_file">get_dict_from_file</a></code></li>
-<li><code><a title="utils.get_private_key_from_file" href="#utils.get_private_key_from_file">get_private_key_from_file</a></code></li>
-<li><code><a title="utils.get_public_key_from_file" href="#utils.get_public_key_from_file">get_public_key_from_file</a></code></li>
-<li><code><a title="utils.save_dict_to_file" href="#utils.save_dict_to_file">save_dict_to_file</a></code></li>
+<li><code><a title="utils.support.delete_files_in_folder" href="#utils.support.delete_files_in_folder">delete_files_in_folder</a></code></li>
+<li><code><a title="utils.support.get_dict_from_file" href="#utils.support.get_dict_from_file">get_dict_from_file</a></code></li>
+<li><code><a title="utils.support.get_private_key_from_file" href="#utils.support.get_private_key_from_file">get_private_key_from_file</a></code></li>
+<li><code><a title="utils.support.get_public_key_from_file" href="#utils.support.get_public_key_from_file">get_public_key_from_file</a></code></li>
+<li><code><a title="utils.support.save_dict_to_file" href="#utils.support.save_dict_to_file">save_dict_to_file</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
 <ul>
 <li>
-<h4><code><a title="utils.PrivateKey" href="#utils.PrivateKey">PrivateKey</a></code></h4>
+<h4><code><a title="utils.support.PrivateKey" href="#utils.support.PrivateKey">PrivateKey</a></code></h4>
 <ul class="">
-<li><code><a title="utils.PrivateKey.id" href="#utils.PrivateKey.id">id</a></code></li>
-<li><code><a title="utils.PrivateKey.key" href="#utils.PrivateKey.key">key</a></code></li>
+<li><code><a title="utils.support.PrivateKey.id" href="#utils.support.PrivateKey.id">id</a></code></li>
+<li><code><a title="utils.support.PrivateKey.key" href="#utils.support.PrivateKey.key">key</a></code></li>
 </ul>
 </li>
 <li>
-<h4><code><a title="utils.PublicKey" href="#utils.PublicKey">PublicKey</a></code></h4>
+<h4><code><a title="utils.support.PublicKey" href="#utils.support.PublicKey">PublicKey</a></code></h4>
 <ul class="">
-<li><code><a title="utils.PublicKey.address" href="#utils.PublicKey.address">address</a></code></li>
-<li><code><a title="utils.PublicKey.id" href="#utils.PublicKey.id">id</a></code></li>
-<li><code><a title="utils.PublicKey.x" href="#utils.PublicKey.x">x</a></code></li>
-<li><code><a title="utils.PublicKey.y" href="#utils.PublicKey.y">y</a></code></li>
+<li><code><a title="utils.support.PublicKey.address" href="#utils.support.PublicKey.address">address</a></code></li>
+<li><code><a title="utils.support.PublicKey.id" href="#utils.support.PublicKey.id">id</a></code></li>
+<li><code><a title="utils.support.PublicKey.x" href="#utils.support.PublicKey.x">x</a></code></li>
+<li><code><a title="utils.support.PublicKey.y" href="#utils.support.PublicKey.y">y</a></code></li>
 </ul>
 </li>
 </ul>

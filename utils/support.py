@@ -28,6 +28,7 @@ class PrivateKey:
 def save_dict_to_file(path, data: dict):
     """
     Allows to store any dictionary in a file under the given path.
+    Note that all values are represented as string. E.g. if a key was 1, it is not "1"
 
     :param path: the path where the dictionary should be stored at
     :param dict data: the state to be stored
@@ -40,6 +41,7 @@ def save_dict_to_file(path, data: dict):
 def get_dict_from_file(path) -> dict:
     """
     Allows to load any dictionary (that has been stored via save_dict_to_file()) from a file under the given path.
+    Note that all values are represented as string. E.g. if a key was 1, it is not "1"
 
     :param path: the path where the file is located
     :return: the loaded dictionary
