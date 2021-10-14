@@ -25,9 +25,9 @@ class Wallet:
         :param base_directory_cw: specifies the storage location of the cold wallet
         """
         if not os.path.exists(base_directory_hw):
-            os.mkdir(base_directory_hw)
+            os.makedirs(base_directory_hw)
         if not os.path.exists(base_directory_cw):
-            os.mkdir(base_directory_cw)
+            os.makedirs(base_directory_cw)
 
         self.__cold_wallet = _ColdWallet(base_directory_cw + "ColdWalletData/")
         self.__hot_wallet = _HotWallet(base_directory_hw + "HotWalletData/")
