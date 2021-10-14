@@ -8,10 +8,6 @@ __pycache__/
 # C extensions
 *.so
 
-# tmp files
-ColdWalletData/
-HotWalletData/
-
 # Distribution / packaging
 .Python
 env/
