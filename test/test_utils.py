@@ -51,11 +51,23 @@ class TestDictProcessing(unittest.TestCase):
 
 
 class TestKeyLoading(unittest.TestCase):
+    wallet = None
+    folder_location = "test/testData/testKeyLoadingData/"
+
+    def setUp(self):
+        self.wallet = tudwallet.Wallet(self.folder_location, self.folder_location)
+        # self.wallet.generate_master_key(overwrite=False) -> master key already created
+
     def test_private_key_loading(self):
-        self.assertEqual(True, False)  # add assertion here
+        key = utils.support.get_private_key_from_file(self.folder_location + "ColdWalletData/MSK.key")
+        self.assertEqual(str(key), "112357194824290667643081788596717750908569231627957702069966763736710490688244")
 
     def test_public_key_loading(self):
-        self.assertEqual(True, False)  # add assertion here
+        key = utils.support.get_public_key_from_file(self.folder_location + "ColdWalletData/MPK.key")
+        x = str(key.getPointX())
+        y = str(key.getPointY())
+        self.assertEqual(x, '65336545145707845447633548679905171498582881632582510202034999821249028325015')
+        self.assertEqual(y, '13562228381135751081805438548054675439132929618183591005162696899711915154384')
 
 
 if __name__ == '__main__':
