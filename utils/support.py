@@ -94,3 +94,23 @@ def delete_files_in_folder(path):
     for root, dirs, files in os.walk(path):
         for file in files:
             os.remove(os.path.join(root, file))
+
+
+def find_second_highest_key_in_dict(data: dict[str, str]) -> str:
+    """
+    Finds the second highest key of a dictionary
+    Note that the key must be in string format
+    Intended to be used to find the last state for session secret key deriving
+    Raises an exception if the dictionary is to short to contain a second highest key
+
+    :param data: the dictionary the second highest key should be extracted from
+    :return: the second highest key
+    """
+    keys = data.keys()
+
+    if len(keys) <= 1:
+        raise Exception("Only one or less keys in dictionary. There cannot be a second highest value.")
+
+    keys = [int(key) for key in keys]  # we expect the key to be in string format (due to dict loading/storing)
+    keys.sort(reverse=True)  # sort in reverse and take
+    return str(keys[1])  # and take second (highest) element. Convert back to string

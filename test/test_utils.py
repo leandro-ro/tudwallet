@@ -49,6 +49,21 @@ class TestDictProcessing(unittest.TestCase):
         received_dict = utils.support.get_dict_from_file(self.file_location)
         self.assertEqual(received_dict, self.test_dict)
 
+    def test_find_second_highest_key(self):
+        second_highest = utils.support.find_second_highest_key_in_dict(self.test_dict)
+        self.assertEqual("3", second_highest)
+
+        changed_test_dict = {k: self.test_dict[k] for k in list(self.test_dict.keys())[:2]}
+        second_highest = utils.support.find_second_highest_key_in_dict(changed_test_dict)
+        self.assertEqual("1", second_highest)
+
+        exception_dict = {"1": "test"}
+        with self.assertRaises(Exception):
+            second_highest = utils.support.find_second_highest_key_in_dict(exception_dict)
+
+        empty_dict = {}
+        with self.assertRaises(Exception):
+            second_highest = utils.support.find_second_highest_key_in_dict(empty_dict)
 
 class TestKeyLoading(unittest.TestCase):
     wallet = None

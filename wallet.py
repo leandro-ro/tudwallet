@@ -150,6 +150,12 @@ class Wallet:
         """
         x = public_key["X"][2:]
         y = public_key["Y"][2:]
+
+        if not len(x) % 2 == 0:  # length of x must be even
+            x = "0" + x
+        if not len(y) % 2 == 0:  # length of x must be even
+            y = "0" + y
+
         preimage = x + y
         keccak256 = keccak(hexstr=preimage)
         return "0x" + keccak256.hex()[24:]
@@ -246,7 +252,8 @@ class _ColdWallet:
             if str(id) in key_hash_map:  # if key already derived return it directly from the key file
                 return hex(int(str(key_hash_map[str(id)])))
 
-        last_state = id_state_map[str(self.get_max_id())]
+        last_state_id = find_second_highest_key_in_dict(id_state_map)
+        last_state = id_state_map[last_state_id]
 
         master_sec_key = get_private_key_from_file(self.__master_secret_file_path)  # Type: java.math.BigInteger
 
