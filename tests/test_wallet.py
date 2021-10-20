@@ -9,7 +9,7 @@ from eth_account.messages import encode_defunct
 
 class TestWalletInitialization(unittest.TestCase):
     wallet = None
-    folder_location = "test/testData/testWalletInitData/"
+    folder_location = "tests/fixture/testWalletInitData/"
     cold_wallet_location = folder_location + "ColdWalletData/"
     hot_wallet_location = folder_location + "HotWalletData/"
 
@@ -18,7 +18,7 @@ class TestWalletInitialization(unittest.TestCase):
         self.wallet.generate_master_key(overwrite=True)
 
     def tearDown(self):
-        # Delete all data created during the test to reset for next initialization test run
+        # Delete all data created during the tests to reset for next initialization tests run
         shutil.rmtree(self.folder_location)
 
     def test_master_public_key_generation(self):
@@ -70,7 +70,7 @@ class TestWalletInitialization(unittest.TestCase):
 
 class TestWalletSigning(unittest.TestCase):
     wallet = None
-    folder_location = "test/testData/testWalletSignData/"
+    folder_location = "tests/fixture/testWalletSignData/"
     test_transaction = {
         # Note that the address must be in checksum format or native bytes:
         'to': '0x82fc853256B05029b3759161B32E3460Fe4eaC77',
@@ -91,7 +91,7 @@ class TestWalletSigning(unittest.TestCase):
         self.wallet.secret_key_derive(2)
 
     def tearDown(self):
-        # Delete all data created during the test to reset for next test run
+        # Delete all data created during the tests to reset for next tests run
         shutil.rmtree(self.folder_location)
 
     def test_sign_message_one(self):
@@ -145,14 +145,14 @@ class TestWalletSigning(unittest.TestCase):
 
 class TestWalletDerivation(unittest.TestCase):
     wallet = None
-    folder_location = "test/testData/testDerivationData/"
+    folder_location = "tests/fixture/testDerivationData/"
 
     def setUp(self):
         self.wallet = tudwallet.Wallet(self.folder_location, self.folder_location)
         self.wallet.generate_master_key(overwrite=True)
 
     def tearDown(self):
-        # Delete all data created during the test to reset for next test run
+        # Delete all data created during the tests to reset for next tests run
         shutil.rmtree(self.folder_location)
 
     def test_derivation_behavior(self):  # Due to ordering dependency we need to run everything in one

@@ -6,7 +6,7 @@ import os
 
 class TestDataclasses(unittest.TestCase):
     wallet = None
-    folder_location = "test/testData/testDataclassesData/"
+    folder_location = "tests/fixture/testDataclassesData/"
     intended_id = 1
 
     def setUp(self):
@@ -31,7 +31,7 @@ class TestDataclasses(unittest.TestCase):
 
 
 class TestDictProcessing(unittest.TestCase):
-    folder_location = "test/testData/testDictProcessingData/"
+    folder_location = "tests/fixture/testDictProcessingData/"
     file_location = folder_location + "test_dict.txt"
     test_dict = {"1": 'This', "2": 'Is', "3": 'Computer', "4": "Science"}
 
@@ -57,7 +57,7 @@ class TestDictProcessing(unittest.TestCase):
         second_highest = utils.support.find_second_highest_key_in_dict(changed_test_dict)
         self.assertEqual("1", second_highest)
 
-        exception_dict = {"1": "test"}
+        exception_dict = {"1": "tests"}
         with self.assertRaises(Exception):
             second_highest = utils.support.find_second_highest_key_in_dict(exception_dict)
 
@@ -67,7 +67,7 @@ class TestDictProcessing(unittest.TestCase):
 
 class TestKeyLoading(unittest.TestCase):
     wallet = None
-    folder_location = "test/testData/testKeyLoadingData/"
+    folder_location = "tests/fixture/testKeyLoadingData/"
 
     def setUp(self):
         self.wallet = tudwallet.Wallet(self.folder_location, self.folder_location)
