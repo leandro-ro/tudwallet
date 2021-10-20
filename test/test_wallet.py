@@ -3,6 +3,8 @@ import unittest
 import wallet as tudwallet
 import utils.support
 import os
+from eth_account import Account
+from eth_account.messages import encode_defunct
 
 
 class TestWalletInitialization(unittest.TestCase):
@@ -67,18 +69,127 @@ class TestWalletInitialization(unittest.TestCase):
 
 
 class TestWalletSigning(unittest.TestCase):
-    def test_something(self):
-        self.assertEqual(True, False)  # add assertion here
+    wallet = None
+    folder_location = "test/testData/testWalletSignData/"
+    test_transaction = {
+        # Note that the address must be in checksum format or native bytes:
+        'to': '0x82fc853256B05029b3759161B32E3460Fe4eaC77',
+        'value': 10000000000000000,
+        'gas': 2000000,
+        'gasPrice': 2500000008,
+        'nonce': 2,
+        'chainId': 3,  # Ropsten Testnet ID = 3
+    }
+
+    def setUp(self):
+        self.wallet = tudwallet.Wallet(self.folder_location, self.folder_location)
+        self.wallet.generate_master_key(overwrite=True)
+        self.wallet.public_key_derive(1)
+        self.wallet.secret_key_derive(1)
+
+        self.wallet.public_key_derive(2)
+        self.wallet.secret_key_derive(2)
+
+    def tearDown(self):
+        # Delete all data created during the test to reset for next test run
+        shutil.rmtree(self.folder_location)
+
+    def test_sign_message_one(self):
+        test_message = "Test message"
+        expected_address = self.wallet.public_key_derive(1).address
+
+        sig = self.wallet.sign_message(test_message, 1)
+        calculated_address = Account.recover_message(encode_defunct(text=test_message), (sig.v, sig.r, sig.s))
+
+        self.assertEqual(expected_address, calculated_address.lower())
+
+    def test_sign_message_two(self):
+        test_message = "Test another message"
+        expected_address = self.wallet.public_key_derive(2).address
+
+        sig = self.wallet.sign_message(test_message, 2)
+        calculated_address = Account.recover_message(encode_defunct(text=test_message), (sig.v, sig.r, sig.s))
+
+        self.assertEqual(expected_address, calculated_address.lower())
+
+    def test_sign_transaction_one(self):
+        signed_tx = self.wallet.sign_transaction(self.test_transaction, 1)
+        expected_address = self.wallet.public_key_derive(1).address
+
+        calculated_address = Account.recover_transaction(signed_tx.rawTransaction)
+
+        self.assertEqual(expected_address, calculated_address.lower())
+
+    def test_sign_transaction_two(self):
+        signed_tx = self.wallet.sign_transaction(self.test_transaction, 2)
+        expected_address = self.wallet.public_key_derive(2).address
+
+        calculated_address = Account.recover_transaction(signed_tx.rawTransaction)
+
+        self.assertEqual(expected_address, calculated_address.lower())
+
+    def test_sign_with_underived_id(self):
+        with self.assertRaises(Exception):
+            self.wallet.sign_message("Test message", 10)
+
+        with self.assertRaises(Exception):
+            self.wallet.sign_message("Test message", -10)
+
+        with self.assertRaises(Exception):
+            self.wallet.sign_transaction(self.test_transaction, 100)
+
+    def test_sign_with_invalid_transaction(self):
+        with self.assertRaises(Exception):
+            self.wallet.sign_transaction("Not a transaction", 1)
 
 
 class TestWalletDerivation(unittest.TestCase):
-    def test_something(self):
-        self.assertEqual(True, False)  # add assertion here
+    wallet = None
+    folder_location = "test/testData/testDerivationData/"
 
+    def setUp(self):
+        self.wallet = tudwallet.Wallet(self.folder_location, self.folder_location)
+        self.wallet.generate_master_key(overwrite=True)
 
-class TestWalletExceptions(unittest.TestCase):
-    def test_something(self):
-        self.assertEqual(True, False)  # add assertion here
+    def tearDown(self):
+        # Delete all data created during the test to reset for next test run
+        shutil.rmtree(self.folder_location)
+
+    def test_derivation_behavior(self):  # Due to ordering dependency we need to run everything in one
+        all_ids = self.wallet.get_all_ids()
+        self.assertEqual(len(all_ids), 0)
+
+        self.wallet.public_key_derive()  # Should derive with id = 1 -> last_id + 1
+        self.wallet.secret_key_derive()  # Should derive with id = 1 -> last derived session public key id
+        all_ids = self.wallet.get_all_ids()
+
+        self.assertEqual(len(all_ids), 1)
+        self.assertTrue(1 in all_ids)
+
+        self.wallet.public_key_derive()  # Should derive with id = 2 -> last_id + 1
+        self.wallet.secret_key_derive()  # Should derive with id = 2 -> last derived session public key id
+        all_ids = self.wallet.get_all_ids()
+
+        self.assertEqual(len(all_ids), 2)
+        self.assertTrue(1, 2 in all_ids)
+
+        for i in range(3, 101):
+            self.wallet.public_key_derive()  # Derive another 98 session public keys
+
+        all_ids = self.wallet.get_all_ids()
+        print(all_ids)
+        self.assertEqual(len(all_ids), 100)
+
+        self.wallet.public_key_derive(200)
+
+        with self.assertRaises(Exception):
+            self.wallet.public_key_derive(150)  # Should not be possible because id = 200 derived earlier
+
+        with self.assertRaises(Exception):
+            self.wallet.public_key_derive(-10)  # Should not be possible because id is negative
+
+        with self.assertRaises(Exception):
+            self.wallet.secret_key_derive(150)  # Should not be possible because no matching public key derived
 
 
 if __name__ == '__main__':
