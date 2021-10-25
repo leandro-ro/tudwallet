@@ -1,3 +1,7 @@
+# Author: Leandro Rometsch, 2021
+# Email: leandro@rometsch.org
+# TU Darmstadt, Chair of Applied Cryptography
+
 import shutil
 import unittest
 import wallet as tudwallet

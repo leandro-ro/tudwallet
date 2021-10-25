@@ -1,3 +1,7 @@
+# Author: Leandro Rometsch, 2021
+# Email: leandro@rometsch.org
+# TU Darmstadt, Chair of Applied Cryptography
+
 from shutil import copyfile
 
 from eth_account import account

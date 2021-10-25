@@ -1,3 +1,7 @@
+# Author: Leandro Rometsch, 2021
+# Email: leandro@rometsch.org
+# TU Darmstadt, Chair of Applied Cryptography
+
 # Allow Java modules to be imported
 import jpype.imports
 from jpype import JString, JPackage, JArray
