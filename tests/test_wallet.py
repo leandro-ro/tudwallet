@@ -181,7 +181,6 @@ class TestWalletDerivation(unittest.TestCase):
             self.wallet.public_key_derive()  # Derive another 98 session public keys
 
         all_ids = self.wallet.get_all_ids()
-        print(all_ids)
         self.assertEqual(len(all_ids), 100)
 
         self.wallet.public_key_derive(200)
