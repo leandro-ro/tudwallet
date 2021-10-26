@@ -10,9 +10,9 @@ When running the unit tests, make sure the working directory points at the main 
 to run all test cases.
 
 ### Wallet initialization
-To initialize the wallet, import the `wallet` module and create a wallet object. `base_directory_hw` sets the storage location for all data concerning the hot wallet and `base_directory_cw` for all data concerning the cold wallet. Please keep in mind that in production scenarios, the cold wallet location is intended only to come online when needed.```python
+To initialize the wallet, import the `wallet` module and create a wallet object. `base_directory_hw` sets the storage location for all data concerning the hot wallet and `base_directory_cw` for all data concerning the cold wallet. Please keep in mind that in production scenarios, the cold wallet location is intended only to come online when needed.
+```python
 import wallet as tud
-```
 test_wallet = tud.Wallet(base_directory_hw="/Documents/HotWallet/", base_directory_cw="/OtherDrive/ColdWallet/")
 test_wallet.generate_master_key(overwrite=False)
 ```
@@ -35,8 +35,8 @@ test_wallet.secret_key_derive()  # Secret key for the latest derived public key,
 ```
 
 ### Message signing
-To sign a message use `.sign_message()`. The ID specifies which (already derived!) key pair is being used for signing. An exception will be raised if an ID is given that was not used to derive a public and secret key earlier.```python
-```
+To sign a message use `.sign_message()`. The ID specifies which (already derived!) key pair is being used for signing. An exception will be raised if an ID is given that was not used to derive a public and secret key earlier.
+```python
 message = "This is a test!"
 signed_msg = test_wallet.sign_message(message=message, id=1)
 ```
