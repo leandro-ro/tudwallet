@@ -2,6 +2,17 @@
 This project is a deterministic ethereum wallet that utilizes cryptographic operations from an underlying Java implementation by @CROSSINGTUD, which is based on "A Formal Treatment of Deterministic Wallets" by Das et al. CCS'19 - https://dl.acm.org/doi/abs/10.1145/3319535.3354236
 
 The underlying cryptography provides the wallet with a randomized ECDSA scheme to generate ECDSA key pairs in a hot/cold wallet environment. The main key pair allows deriving other key pairs intended to be used as (one-time) ethereum accounts. Notably, this wallet makes the provided java implementation of the hot and cold wallet accessible in a python environment, adds proper state management and a synchronization mechanism that only accesses the cold wallet when needed.
+
+## Requirements
+### General
+- python3 - e.g. on Ubuntu via `sudo apt install python3.8`
+- java - e.g. on Ubuntu via `sudo apt install default-jre`
+
+### Python libraries
+- eth_accounts - `pip3 install eth_account`
+- eth_utils - `pip3 install eth_utils`
+- jpype - `pip3 install jpype1`
+
 ## Usage Examples and Explanation
 ### Running Unit Tests
 When running the unit tests, make sure the working directory points at the main directory and not the test directory. From the main directory, you can simply use
