@@ -100,7 +100,7 @@ def delete_files_in_folder(path):
             os.remove(os.path.join(root, file))
 
 
-def find_second_highest_key_in_dict(data: dict[str, str]) -> str:
+def find_second_highest_key_in_dict(data) -> str:
     """
     Finds the second highest key of a dictionary
     Note that the key must be in string format
