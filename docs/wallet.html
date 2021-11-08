@@ -148,7 +148,7 @@ class Wallet:
         &#34;&#34;&#34;
         Generates a ECDSA signature for the given message based on a already derived key pair given by id.
 
-        :param message: a message given as string
+        :param message: a message given as string or bytes
         :param id: id of an already derived session key pair
         :return: the signed message, containing the messageHash, the signature in Hex and v, r, s
         &#34;&#34;&#34;
@@ -301,7 +301,7 @@ class _ColdWallet:
 
     def sign_message(self, message: str, sk: PrivateKey):
         &#34;&#34;&#34;
-        Sign a message given as string.
+        Sign a message given as string or bytes.
         Currently using eth_account&#39;s signing functionality.
         Might switch to the wrapper.py signing functionality in future work.
 

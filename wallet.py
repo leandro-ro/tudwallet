@@ -120,11 +120,11 @@ class Wallet:
         sig = self.__cold_wallet.sign_transaction(transaction_dict, sk)
         return sig
 
-    def sign_message(self, message: str, id: int):
+    def sign_message(self, message, id: int):
         """
         Generates a ECDSA signature for the given message based on a already derived key pair given by id.
 
-        :param message: a message given as string
+        :param message: a message given as string or bytes
         :param id: id of an already derived session key pair
         :return: the signed message, containing the messageHash, the signature in Hex and v, r, s
         """
@@ -282,9 +282,9 @@ class _ColdWallet:
         signature = account.Account.sign_transaction(transaction_dict, sk.key)
         return signature
 
-    def sign_message(self, message: str, sk: PrivateKey):
+    def sign_message(self, message, sk: PrivateKey):
         """
-        Sign a message given as string.
+        Sign a message given as string or bytes.
         Currently using eth_account's signing functionality.
         Might switch to the wrapper.py signing functionality in future work.
 
@@ -294,7 +294,13 @@ class _ColdWallet:
         """
         self._check_initialization()
 
-        message_hash = encode_defunct(text=message)
+        if type(message) is str:
+            message_hash = encode_defunct(text=message)
+        elif type(message) is bytes:
+            message_hash = encode_defunct(primitive=message)
+        else:
+            raise Exception("Message type not supported. Please provide as string or bytes.")
+
         return account.Account.sign_message(message_hash, sk.key)
 
     def get_ids(self):

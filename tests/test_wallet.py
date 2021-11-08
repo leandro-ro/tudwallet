@@ -94,11 +94,14 @@ class TestWalletSigning(unittest.TestCase):
         self.wallet.public_key_derive(2)
         self.wallet.secret_key_derive(2)
 
+        self.wallet.public_key_derive(3)
+        self.wallet.secret_key_derive(3)
+
     def tearDown(self):
         # Delete all data created during the tests to reset for next tests run
         shutil.rmtree(self.folder_location)
 
-    def test_sign_message_one(self):
+    def test_sign_message_one_string(self):
         test_message = "Test message"
         expected_address = self.wallet.public_key_derive(1).address
 
@@ -107,12 +110,21 @@ class TestWalletSigning(unittest.TestCase):
 
         self.assertEqual(expected_address, calculated_address.lower())
 
-    def test_sign_message_two(self):
+    def test_sign_message_two_string(self):
         test_message = "Test another message"
         expected_address = self.wallet.public_key_derive(2).address
 
         sig = self.wallet.sign_message(test_message, 2)
         calculated_address = Account.recover_message(encode_defunct(text=test_message), (sig.v, sig.r, sig.s))
+
+        self.assertEqual(expected_address, calculated_address.lower())
+
+    def test_sign_message_three_bytes(self):
+        test_message = b'BytesTest'
+        expected_address = self.wallet.public_key_derive(3).address
+
+        sig = self.wallet.sign_message(test_message, 3)
+        calculated_address = Account.recover_message(encode_defunct(primitive=test_message), (sig.v, sig.r, sig.s))
 
         self.assertEqual(expected_address, calculated_address.lower())
 
