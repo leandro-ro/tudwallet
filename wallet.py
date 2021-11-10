@@ -86,7 +86,19 @@ class Wallet:
         if id not in self.__cold_wallet.get_ids():  # if there is no public key derived from given id throw Exception
             raise Exception("tudwallet - Derive session public key with ID = " + str(id) + " first!")
 
-        sk_raw = self.__cold_wallet.secret_key_derive(id)
+        sk_raw = str(self.__cold_wallet.secret_key_derive(id))
+
+        # Normalize secret key here to prevent loss of a zero byte
+        sk_raw_len = len(sk_raw)
+        if sk_raw_len < 66:
+            sk_raw = sk_raw[2:]  # remove 0x
+
+            i = 66 - sk_raw_len
+            for p in range(0, i):
+                sk_raw = "0" + sk_raw
+
+            sk_raw = "0x" + sk_raw
+
         return PrivateKey(key=sk_raw, id=id)
 
     def public_key_derive(self, id=None):
@@ -166,9 +178,12 @@ class Wallet:
         x = public_key["X"][2:]
         y = public_key["Y"][2:]
 
-        if not len(x) % 2 == 0:  # length of x must be even
+        i = 64 - len(x)
+        for i in range(0, i):
             x = "0" + x
-        if not len(y) % 2 == 0:  # length of x must be even
+
+        i = 64 - len(y)
+        for i in range(0, i):
             y = "0" + y
 
         preimage = x + y
