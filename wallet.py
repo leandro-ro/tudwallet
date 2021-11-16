@@ -4,6 +4,7 @@
 
 from shutil import copyfile
 
+import eth_utils
 from eth_account import account
 from eth_account.messages import encode_defunct
 from eth_utils import keccak
@@ -167,6 +168,7 @@ class Wallet:
         x = public_key["X"][2:]
         y = public_key["Y"][2:]
 
+        #  Bring public key to same length (by extending with zeros as msb) in order to secure consistent hashing
         i = 64 - len(x)
         for i in range(0, i):
             x = "0" + x
@@ -177,7 +179,8 @@ class Wallet:
 
         preimage = x + y
         keccak256 = keccak(hexstr=preimage)
-        return "0x" + keccak256.hex()[24:]
+        address = eth_utils.to_checksum_address("0x" + keccak256.hex()[24:])
+        return address
 
     def _sync_wallets(self):
         """
