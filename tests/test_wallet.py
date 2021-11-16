@@ -108,7 +108,7 @@ class TestWalletSigning(unittest.TestCase):
         sig = self.wallet.sign_message(test_message, 1)
         calculated_address = Account.recover_message(encode_defunct(text=test_message), (sig.v, sig.r, sig.s))
 
-        self.assertEqual(expected_address, calculated_address.lower())
+        self.assertEqual(expected_address, calculated_address)
 
     def test_sign_message_two_string(self):
         test_message = "Test another message"
@@ -117,7 +117,7 @@ class TestWalletSigning(unittest.TestCase):
         sig = self.wallet.sign_message(test_message, 2)
         calculated_address = Account.recover_message(encode_defunct(text=test_message), (sig.v, sig.r, sig.s))
 
-        self.assertEqual(expected_address, calculated_address.lower())
+        self.assertEqual(expected_address, calculated_address)
 
     def test_sign_message_three_bytes(self):
         test_message = b'BytesTest'
@@ -126,7 +126,7 @@ class TestWalletSigning(unittest.TestCase):
         sig = self.wallet.sign_message(test_message, 3)
         calculated_address = Account.recover_message(encode_defunct(primitive=test_message), (sig.v, sig.r, sig.s))
 
-        self.assertEqual(expected_address, calculated_address.lower())
+        self.assertEqual(expected_address, calculated_address)
 
     def test_sign_transaction_one(self):
         signed_tx = self.wallet.sign_transaction(self.test_transaction, 1)
@@ -134,7 +134,7 @@ class TestWalletSigning(unittest.TestCase):
 
         calculated_address = Account.recover_transaction(signed_tx.rawTransaction)
 
-        self.assertEqual(expected_address, calculated_address.lower())
+        self.assertEqual(expected_address, calculated_address)
 
     def test_sign_transaction_two(self):
         signed_tx = self.wallet.sign_transaction(self.test_transaction, 2)
@@ -142,7 +142,7 @@ class TestWalletSigning(unittest.TestCase):
 
         calculated_address = Account.recover_transaction(signed_tx.rawTransaction)
 
-        self.assertEqual(expected_address, calculated_address.lower())
+        self.assertEqual(expected_address, calculated_address)
 
     def test_sign_with_underived_id(self):
         with self.assertRaises(Exception):
