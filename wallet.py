@@ -8,20 +8,9 @@ import eth_utils
 from eth_account import account
 from eth_account.messages import encode_defunct
 from eth_utils import keccak
-import os
 
-from .utils.support import (
-    PublicKey,
-    PrivateKey,
-    save_dict_to_file,
-    get_dict_from_file,
-    get_private_key_from_file,
-    get_public_key_from_file,
-    delete_files_in_folder,
-    find_second_highest_key_in_dict,
-)
-
-from .utils.wrapper import ColdWalletWrapper, HotWalletWrapper
+from utils.support import *
+from utils.wrapper import ColdWalletWrapper, HotWalletWrapper
 
 MPK_FILE_NAME = "MPK.key"  # Master Public Key
 MSK_FILE_NAME = "MSK.key"  # Master Secret Key
