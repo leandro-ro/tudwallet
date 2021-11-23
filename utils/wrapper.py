@@ -6,8 +6,12 @@
 import jpype.imports
 from jpype import JString, JPackage, JArray
 
+# Look for (relative path to) libs folder
+import pathlib
+libs = str(pathlib.Path(__file__).parent.resolve()).replace("tudwallet/utils", "tudwallet/libs/*")
+
 # Start JVM with Java types on return
-jpype.startJVM("-ea", classpath=['libs/*'], convertStrings=False)
+jpype.startJVM("-ea", classpath=[libs], convertStrings=False)
 
 # import the Java modules
 from com.ewallet.field import ColdWallet
