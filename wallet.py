@@ -4,13 +4,21 @@
 
 from shutil import copyfile
 
-import eth_utils
 from eth_account import account
 from eth_account.messages import encode_defunct
-from eth_utils import keccak
+from eth_account.datastructures import SignedMessage, SignedTransaction
+from eth_typing import Hash32
+from eth_utils import keccak, to_checksum_address
+from hexbytes import HexBytes
 
 from utils.support import *
-from utils.wrapper import ColdWalletWrapper, HotWalletWrapper
+from utils.wrapper import (
+    ColdWalletWrapper,
+    HotWalletWrapper,
+    coords_to_java_public_key,
+    to_jstring_in_bytes,
+    hex_to_java_biginteger,
+)
 
 MPK_FILE_NAME = "MPK.key"  # Master Public Key
 MSK_FILE_NAME = "MSK.key"  # Master Secret Key
@@ -144,7 +152,8 @@ class Wallet:
         self._id_existing(id)
 
         sk = self.secret_key_derive(id)  # Note that in this case no new key is derived. We only fetch the "old" one
-        sig = self.__cold_wallet.sign_message(message, sk)
+        pk = self.public_key_derive(id)  # Same holds for this statement
+        sig = self.__cold_wallet.sign_message(message, sk, pk)
         return sig
 
     def get_all_ids(self):
@@ -179,7 +188,7 @@ class Wallet:
 
         preimage = x + y
         keccak256 = keccak(hexstr=preimage)
-        address = eth_utils.to_checksum_address("0x" + keccak256.hex()[24:])
+        address = to_checksum_address("0x" + keccak256.hex()[24:])
         return address
 
     def _sync_wallets(self):
@@ -300,7 +309,7 @@ class _ColdWallet:
         signature = account.Account.sign_transaction(transaction_dict, sk.key)
         return signature
 
-    def sign_message(self, message, sk: PrivateKey):
+    def sign_message(self, message, sk: PrivateKey, pk: PublicKey):
         """
         Sign a message given as string or bytes.
         Currently using eth_account's signing functionality.
@@ -308,18 +317,41 @@ class _ColdWallet:
 
         :param message: the message to be signed
         :param sk: the session secret key as PrivateKey dataclass
+        :param pk: the session public key as PublicKey dataclass
         :return: the signed message
         """
         self._check_initialization()
 
         if type(message) is str:
-            message_hash = encode_defunct(text=message)
+            message = encode_defunct(text=message)
         elif type(message) is bytes:
-            message_hash = encode_defunct(primitive=message)
+            message = encode_defunct(primitive=message)
         else:
             raise Exception("Message type not supported. Please provide as string or bytes.")
 
-        return account.Account.sign_message(message_hash, sk.key)
+        ref = account.Account.sign_message(message, sk.key)
+        print(str(ref.signature.hex()))
+        joined = b'\x19' + message.version + message.header + message.body # To accomadate EIP-191
+        signable_message_hash = keccak(joined)
+        raw_sig = ColdWalletWrapper().sign(to_jstring_in_bytes(signable_message_hash.hex()),
+                                           hex_to_java_biginteger(sk.key))
+
+        r = int(raw_sig[:64], 16)
+        s = int(raw_sig[64:128], 16)
+
+        v_raw = int(raw_sig[128:129], 16)
+        v = v_raw + 27
+
+        raw_sig = raw_sig[:128] + str(hex(v))[2:]
+
+
+        return SignedMessage(
+             messageHash=HexBytes(signable_message_hash),
+             r=r,
+             s=s,
+             v=v,
+             signature=HexBytes(str(raw_sig)),
+        )
 
     def get_ids(self):
         """

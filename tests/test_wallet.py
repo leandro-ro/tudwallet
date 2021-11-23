@@ -106,6 +106,7 @@ class TestWalletSigning(unittest.TestCase):
         expected_address = self.wallet.public_key_derive(1).address
 
         sig = self.wallet.sign_message(test_message, 1)
+        print(str(sig.signature.hex()))
         calculated_address = Account.recover_message(encode_defunct(text=test_message), (sig.v, sig.r, sig.s))
 
         self.assertEqual(expected_address, calculated_address)
