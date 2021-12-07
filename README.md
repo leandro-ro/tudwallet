@@ -24,7 +24,7 @@ to run all test cases.
 To initialize the wallet, import the `wallet` module and create a wallet object. `base_directory_hw` sets the storage location for all data concerning the hot wallet and `base_directory_cw` for all data concerning the cold wallet. Please keep in mind that in production scenarios, the cold wallet location is intended only to come online when needed.
 ```python
 import wallet as tud
-test_wallet = tud.Wallet(base_directory_hw="/Documents/HotWallet/", base_directory_cw="/OtherDrive/ColdWallet/")
+test_wallet = tud.Wallet(base_directory_hw="Documents/HotWallet/", base_directory_cw="OtherDrive/ColdWallet/")
 test_wallet.generate_master_key(overwrite=False)
 ```
 `.generate_master_key()` creates a new master key pair. The overwrite argument is by default set to `False` - if set to `True`, a potentially existing key pair is being replaced with a new one. Note that if overwrite is set to `False` and there is already a master key pair existing (under the given paths in `base_directory_hw`, `base_directory_cw`) an exception is raised. Therefore, `.generate_master_key()` is only to be called if no key pair exists or an existing key pair should be replaced.
