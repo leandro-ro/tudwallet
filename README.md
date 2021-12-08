@@ -1,7 +1,7 @@
 # tudwallet
-This project is a deterministic ethereum wallet that utilizes cryptographic operations from an underlying Java implementation by @CROSSINGTUD, which is based on "A Formal Treatment of Deterministic Wallets" by Das et al. CCS'19 - https://dl.acm.org/doi/abs/10.1145/3319535.3354236
+This project is a custom ethereum wallet that utilizes cryptographic operations from an underlying Java implementation by @CROSSINGTUD, which is based on "A Formal Treatment of Deterministic Wallets" by Das et al. CCS'19 - https://dl.acm.org/doi/abs/10.1145/3319535.3354236
 
-The underlying cryptography provides the wallet with a randomized ECDSA scheme to generate ECDSA key pairs in a hot/cold wallet environment. The main key pair allows deriving other key pairs intended to be used as (one-time) ethereum accounts. Notably, this wallet makes the provided java implementation of the hot and cold wallet accessible in a python environment, adds proper state management and a synchronization mechanism that only accesses the cold wallet when needed.
+The underlying cryptography provides the wallet with a randomized ECDSA scheme to generate ECDSA key pairs in a hot/cold wallet environment. The main key pair allows deriving other key pairs intended to be used as (one-time) ethereum accounts. Notably, this wallet makes the provided java implementation of the hot and cold wallet accessible in a python environment, adds proper state management and a synchronization mechanism that only accesses the cold wallet when needed. The signing is currently performed by the eth_accounts library.
 
 ## Requirements
 ### General
@@ -24,7 +24,7 @@ to run all test cases.
 To initialize the wallet, import the `wallet` module and create a wallet object. `base_directory_hw` sets the storage location for all data concerning the hot wallet and `base_directory_cw` for all data concerning the cold wallet. Please keep in mind that in production scenarios, the cold wallet location is intended only to come online when needed.
 ```python
 import wallet as tud
-test_wallet = tud.Wallet(base_directory_hw="/Documents/HotWallet/", base_directory_cw="/OtherDrive/ColdWallet/")
+test_wallet = tud.Wallet(base_directory_hw="Documents/HotWallet/", base_directory_cw="OtherDrive/ColdWallet/")
 test_wallet.generate_master_key(overwrite=False)
 ```
 `.generate_master_key()` creates a new master key pair. The overwrite argument is by default set to `False` - if set to `True`, a potentially existing key pair is being replaced with a new one. Note that if overwrite is set to `False` and there is already a master key pair existing (under the given paths in `base_directory_hw`, `base_directory_cw`) an exception is raised. Therefore, `.generate_master_key()` is only to be called if no key pair exists or an existing key pair should be replaced.
